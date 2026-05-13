@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Food Order Website</title>
+    <style>
+        *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+}
+
+body{
+      background:#f5f5f5;
+}
+
+header{
+      background:#ff4d4d;
+      color:white;
+      padding:20px;
+      text-align:center;
+}
+
+nav{
+      background:#222;
+      padding:15px;
+      text-align:center;
+}
+
+nav a{
+      color:white;
+      text-decoration:none;
+      margin:0 15px;
+      font-size:18px;
+}
+
+.hero{
+      height:300px;
+      background:url('https://img.freepik.com/free-photo/top-view-fast-food-mix-mozzarella-sticks-club-sandwich-hamburger-mushroom-pizza-caesar-shrimp-salad-french-fries-ketchup-mayo-cheese-sauces-table_141793-3998.jpg?semt=ais_hybrid&w=740&q=80') ;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      font-size:40px;
+      font-weight:bold;
+      opacity: 0;
+  animation: fadein 5s 1 1s linear forwards;
+}
+
+@keyframes fadein {
+  to {
+    opacity: 1;
+  }
+}
+.container{
+      padding:40px;
+      display:flex;
+      justify-content:center;
+      gap:30px;
+      flex-wrap:wrap;
+}
+
+.card{
+      background:white;
+      width:250px;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.2);
+      text-align:center;
+}
+
+.card img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+}
+
+.card h2{
+      margin:15px 0;
+}
+
+.price{
+      color:red;
+      font-size:22px;
+      margin-bottom:10px;
+}
+
+.btn{
+      display:inline-block;
+      margin-bottom:20px;
+      padding:10px 20px;
+      background:#ff4d4d;
+      color:white;
+      text-decoration:none;
+      border-radius:5px;
+}
+
+footer{
+      background:#222;
+      color:white;
+      text-align:center;
+      padding:15px;
+      margin-top:20px;
+}
+body {
+  width: 100vw;
+  height: 100vh;
+  /*just for demo */
+  position: relative;
+}
+
+ body::before {
+  background-image: url(https://picsum.photos/id/1015/1024/768);
+  background-size: cover;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0;
+  animation: fadein 5s 1 1s linear forwards;
+}
+
+@keyframes fadein {
+  to {
+    opacity: 1;
+  }
+}
+
+.category-section{
+    width:90%;
+    margin:40px auto;
+    text-align:center;
+}
+
+.category-title{
+    margin-bottom:20px;
+    color:#222;
+}
+
+.category-table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+.category-table th{
+    background:#ff4d4d;
+    color:white;
+    padding:15px;
+    font-size:18px;
+}
+
+.category-table td{
+    padding:15px;
+    border-bottom:1px solid #ddd;
+}
+
+.category-table tr:hover{
+    background:#f5f5f5;
+}
+
+#login-page,
+#signup-page,
+#enter-site{
+    display:none;
+}
+
+
+.form-container{
+    width:100%;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:url('https://img.freepik.com/free-photo/top-view-fast-food-mix-mozzarella-sticks-club-sandwich-hamburger-mushroom-pizza-caesar-shrimp-salad-french-fries-ketchup-mayo-cheese-sauces-table_141793-3998.jpg')
+    no-repeat center/cover;
+
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:1000;
+}
+
+
+.login-box,
+.signup-box{
+    width:350px;
+    padding:40px;
+    border-radius:20px;
+    background:rgba(0,0,0,0.7);
+    color:white;
+    text-align:center;
+    display:none;
+}
+
+.login-box h1,
+.signup-box h1{
+    margin-bottom:20px;
+}
+
+.login-box input,
+.signup-box input{
+    width:100%;
+    padding:14px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    outline:none;
+}
+
+.btn-form{
+    display:block;
+    margin-top:15px;
+    padding:14px;
+    background:#ff4d4d;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.login-box p,
+.signup-box p{
+    margin-top:15px;
+}
+
+.login-box label,
+.signup-box label{
+    cursor:pointer;
+    color:yellow;
+}
+
+
+#login-page:checked ~ .form-container .login-box{
+    display:block;
+}
+
+
+#signup-page:checked ~ .form-container .signup-box{
+    display:block;
+}
+
+.main-website{
+    display:none;
+}
+
+#enter-site:checked ~ .form-container{
+    display:none;
+}
+
+#enter-site:checked ~ .main-website{
+    display:block;
+}
+    </style>
+  </head>
+  <body>
+
+<input type="radio" name="form" id="login-page" checked>
+<input type="radio" name="form" id="signup-page">
+<input type="checkbox" id="enter-site">
+
+<div class="form-container">
+
+  <div class="login-box">
+
+    <h1>Login</h1>
+    <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number" required>
+
+    <input type="password" placeholder="Enter Password">
+
+    <label for="enter-site" class="btn-form">Login</label>
+
+    <p>
+      Don't have an account?
+      <label for="signup-page">Register</label>
+    </p>
+
+  </div>
+
+
+  <div class="signup-box">
+
+    <h1>Register</h1>
+
+    <input type="text" placeholder="Enter Name">
+
+    <input type="tel" id="phone" name="phone" placeholder="Enter Mobile Number" required>
+
+    <input type="password" placeholder="Create Password">
+
+    <label for="enter-site" class="btn-form">Sign Up</label>
+
+    <p>
+      Already have an account?
+      <label for="login-page">Login</label>
+    </p>
+
+  </div>
+
+</div>
+
+
+<div class="main-website">
+
+</div>
+<header>
+    <h1>Foodie Hub</h1>
+    <p>Order Your Favorite Food</p>
+</header>
+
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Menu</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </nav>
+
+  <div class="hero">
+    Delicious Food Delivered Fast
+  </div>
+
+
+<div class="category-section">
+
+  <h1 class="category-title">Food Categories</h1>
+
+  <table class="category-table">
+
+    <tr>
+      <th>Category</th>
+      <th>Popular Items</th>
+      <th>Starting Price</th>
+    </tr>
+
+    <tr>
+      <td>Burgers</td>
+      <td>Cheese Burger, Veg Burger</td>
+      <td>₹149</td>
+    </tr>
+
+    <tr>
+      <td>Pizza</td>
+      <td>Margherita, Farmhouse</td>
+      <td>₹299</td>
+    </tr>
+
+    <tr>
+      <td>Pasta</td>
+      <td>White Sauce, Red Sauce</td>
+      <td>₹199</td>
+    </tr>
+
+    <tr>
+      <td>Street Food</td>
+      <td>PaniPuri, Bhel, SevPuri</td>
+      <td>₹150</td>
+    </tr>
+
+  </table>
+
+</div>
+
+    <div class="container">
+
+    <div class="card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq2vVVGWx1u0-2Q7QB7FR1t3cdS28oX5FN3w&s" alt="Burger">
+      <h2>Burger</h2>
+      <p class="price">₹149</p>
+      <a href="#" class="btn">Order Now</a>
+    </div>
+
+        <div class="card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt6zKlWn0zYSDXv2XwOIDGWfsfi1OVDWmAcw&s" alt="Pizza">
+      <h2>Pizza</h2>
+      <p class="price">₹299</p>
+      <a href="#" class="btn">Order Now</a>
+    </div>
+
+    <div class="card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtGxJQNLQ_tpfDqgGfFpEARarc7qNGTDVEYg&s" alt="Pasta">
+      <h2>Pasta</h2>
+      <p class="price">₹199</p>
+      <a href="#" class="btn">Order Now</a>
+    </div>
+
+    <div class="card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIEkjFHJFxe3pjU9IooFnr9gI3SUZHsn1jA&s" alt="PaniPuri">
+      <h2>PaniPuri</h2>
+      <p class="price">₹150</p>
+      <a href="#" class="btn">Order Now</a>
+    </div> 
+    </div>
+    
+    
+  <footer>
+    <p>© 2026 Foodie Hub | All Rights Reserved</p>
+  </footer>
+
+  </body>
+</html>
