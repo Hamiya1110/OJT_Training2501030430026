@@ -1,0 +1,98 @@
+<!--Task-6 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Holy Grail Layout</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 200px 1fr 200px;
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas:
+        "header header header"
+        "left main right"
+        "footer footer footer";
+
+      min-height: 100vh;
+      gap: 10px;
+    }
+
+    header {
+      grid-area: header;
+      background: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .left-sidebar {
+      grid-area: left;
+      background: lightblue;
+      padding: 20px;
+    }
+
+    main {
+      grid-area: main;
+      background: lightcoral;
+      padding: 20px;
+    }
+
+    .right-sidebar {
+      grid-area: right;
+      background: lightpink;
+      padding: 20px;
+    }
+
+    footer {
+      grid-area: footer;
+      background: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+          "header"
+          "main"
+          "left"
+          "right"
+          "footer";
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>Header</header>
+
+    <aside class="left-sidebar">
+      Left Sidebar
+    </aside>
+
+    <main>
+      Main Content
+    </main>
+
+    <aside class="right-sidebar">
+      Right Sidebar
+    </aside>
+
+    <footer>Footer</footer>
+  </div>
+</body>
+</html>
