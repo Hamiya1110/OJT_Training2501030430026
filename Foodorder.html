@@ -2,7 +2,9 @@
 <html>
   <head>
     <title>Food Order Website</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- BOOTSTRAP ICONS CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
       * {
@@ -17,6 +19,7 @@
         width: 100vw;
         min-height: 100vh;
         position: relative;
+        overflow-x: hidden;
       }
 
       header {
@@ -111,6 +114,7 @@
         color: white;
         text-decoration: none;
         border-radius: 5px;
+        border: none;
       }
 
       .btn:hover { background: #cc0000; }
@@ -138,29 +142,47 @@
       }
 
       .login-box, .signup-box {
-        width: 350px;
+        width: 380px;
         padding: 40px;
         border-radius: 20px;
-        background: rgba(0,0,0,0.7);
+        background: rgba(0,0,0,0.8);
         color: white;
         text-align: center;
         display: none;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
       }
 
-      .login-box h1, .signup-box h1 { margin-bottom: 20px; }
+      .login-box h1, .signup-box h1 { margin-bottom: 25px; font-weight: bold; }
+      .login-box h1 i, .signup-box h1 i { color: #ff4d4d; margin-right: 10px; }
 
-      .login-box input, .signup-box input {
+      /* Input wrapper layout with icons */
+      .input-group-custom {
+        position: relative;
+        margin-top: 15px;
+        margin-bottom: 4px;
+      }
+
+      .input-group-custom i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+        font-size: 18px;
+      }
+
+      .login-box input, .signup-box input, .checkout-step input {
         width: 100%;
-        padding: 14px;
-        margin: 10px 0 4px 0;
+        padding: 14px 14px 14px 45px;
         border: 2px solid transparent;
         border-radius: 10px;
         outline: none;
-        transition: border 0.2s;
+        transition: border 0.2s, background-color 0.2s;
+        font-size: 15px;
       }
 
       /* Red border on error */
-      .login-box input.error, .signup-box input.error {
+      .login-box input.error, .signup-box input.error, .checkout-step input.error {
         border: 2px solid #ff6b6b;
       }
 
@@ -178,7 +200,7 @@
 
       .btn-form {
         display: block;
-        margin-top: 15px;
+        margin-top: 20px;
         padding: 14px;
         background: #ff4d4d;
         border-radius: 10px;
@@ -188,12 +210,16 @@
         border: none;
         width: 100%;
         font-family: Arial, sans-serif;
+        font-weight: bold;
+        transition: background 0.2s;
       }
 
       .btn-form:hover { background: #cc0000; }
+      .btn-form i { margin-right: 8px; }
 
-      .login-box p, .signup-box p { margin-top: 15px; }
-      .login-box label, .signup-box label { cursor: pointer; color: yellow; }
+      .login-box p, .signup-box p { margin-top: 20px; color: #ccc; }
+      .login-box label, .signup-box label { cursor: pointer; color: yellow; font-weight: bold; }
+      .login-box label:hover, .signup-box label:hover { text-decoration: underline; }
 
       .main-website { display: none; }
 
@@ -251,47 +277,144 @@
       }
 
       .menu-table tr:hover { background: #f5f5f5; }
+      
+      .wishlist-btn{
+        border:none;
+        background:#fff;
+        color:#ff4d4d;
+        font-size:22px;
+        width:45px;
+        height:45px;
+        border-radius:50%;
+        cursor:pointer;
+        box-shadow:0 0 8px rgba(0,0,0,0.2);
+        transition:0.3s;
+      }
+
+      .wishlist-btn:hover{
+        background:#ff4d4d;
+        color:white;
+        transform:scale(1.1);
+      }
+      
+      #cart-container .card{
+        animation: fadein 0.4s ease;
+      }
+
+      #cart-total{
+        margin-top:20px;
+        font-size:28px;
+      }
+
+      /* ── CHECKOUT & PAYMENT MODAL STYLES ── */
+      .payment-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 2000; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .payment-modal-overlay.show { opacity: 1; pointer-events: auto; }
+      
+      .payment-card {
+        background: #fff; width: 480px; padding: 30px;
+        border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        position: relative; transform: scale(0.8); transition: transform 0.3s ease;
+        max-height: 90vh; overflow-y: auto;
+      }
+      .payment-modal-overlay.show .payment-card { transform: scale(1); }
+      
+      .close-payment {
+        position: absolute; top: 15px; right: 20px;
+        font-size: 24px; cursor: pointer; color: #666;
+      }
+      .close-payment:hover { color: #ff4d4d; }
+      
+      .pay-methods {
+        display: flex; justify-content: space-between; margin: 15px 0; gap: 10px;
+      }
+      .method-tab {
+        flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 8px;
+        text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s;
+        display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 14px;
+      }
+      .method-tab i { font-size: 20px; }
+      .method-tab.active { border-color: #ff4d4d; color: #ff4d4d; background: #fff5f5; }
+      
+      .checkout-step .method-content { display: none; margin-top: 15px; }
+      .checkout-step .method-content.active { display: block; }
+      
+      .card-row { display: flex; gap: 10px; margin-top: 15px; }
+      
+      .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 5px;
+        color: #333;
+        text-align: left;
+      }
     </style>
   </head>
   <body>
 
-    <!-- AUTH OVERLAY — now controlled by JS, not radio buttons -->
+    <!-- AUTH OVERLAY -->
     <div class="form-container" id="auth-overlay">
 
       <!-- LOGIN BOX -->
       <div class="login-box" id="login-box" style="display:block;">
-        <h1>Login</h1>
+        <h1><i class="bi bi-box-arrow-in-right"></i>Login</h1>
 
-        <input type="tel" id="login-phone" placeholder="Enter Mobile Number (10 digits)" maxlength="10">
+        <div class="input-group-custom">
+          <i class="bi bi-telephone"></i>
+          <input type="tel" id="login-phone" placeholder="Enter Mobile Number (10 digits)" maxlength="10">
+        </div>
         <div class="err-msg" id="err-lphone">Please enter a valid 10-digit mobile number.</div>
 
-        <input type="password" id="login-pass" placeholder="Enter Password">
+        <div class="input-group-custom">
+          <i class="bi bi-lock"></i>
+          <input type="password" id="login-pass" placeholder="Enter Password">
+        </div>
         <div class="err-msg" id="err-lpass">Password must be at least 6 characters.</div>
 
-        <button class="btn-form" onclick="doLogin()">Login</button>
+        <button class="btn-form" onclick="doLogin()"><i class="bi bi-box-arrow-in-right"></i> Login</button>
 
-        <p>Don't have an account? <label onclick="switchForm('signup')">Register</label></p>
+        <p>Don't have an account? <label onclick="switchForm('signup')">Register <i class="bi bi-arrow-right-short"></i></label></p>
       </div>
 
       <!-- SIGNUP BOX -->
       <div class="signup-box" id="signup-box">
-        <h1>Register</h1>
+        <h1><i class="bi bi-person-plus"></i>Register</h1>
 
-        <input type="text" id="signup-name" placeholder="Enter Full Name">
+        <div class="input-group-custom">
+          <i class="bi bi-person"></i>
+          <input type="text" id="signup-name" placeholder="Enter Full Name">
+        </div>
         <div class="err-msg" id="err-sname">Please enter your name.</div>
 
-        <input type="tel" id="signup-phone" placeholder="Enter Mobile Number (10 digits)" maxlength="10">
+        <div class="input-group-custom">
+          <i class="bi bi-telephone"></i>
+          <input type="tel" id="signup-phone" placeholder="Enter Mobile Number (10 digits)" maxlength="10">
+        </div>
         <div class="err-msg" id="err-sphone">Please enter a valid 10-digit mobile number.</div>
 
-        <input type="password" id="signup-pass" placeholder="Create Password (min 6 characters)">
+        <div class="input-group-custom">
+          <i class="bi bi-lock"></i>
+          <input type="password" id="signup-pass" placeholder="Create Password (min 6 characters)">
+        </div>
         <div class="err-msg" id="err-spass">Password must be at least 6 characters.</div>
 
-        <input type="password" id="signup-confirm" placeholder="Confirm Password">
+        <div class="input-group-custom">
+          <i class="bi bi-lock-fill"></i>
+          <input type="password" id="signup-confirm" placeholder="Confirm Password">
+        </div>
         <div class="err-msg" id="err-sconfirm">Passwords do not match.</div>
 
-        <button class="btn-form" onclick="doSignup()">Sign Up</button>
+        <button class="btn-form" onclick="doSignup()"><i class="bi bi-check-circle"></i> Sign Up</button>
 
-        <p>Already have an account? <label onclick="switchForm('login')">Login</label></p>
+        <p>Already have an account? <label onclick="switchForm('login')"><i class="bi bi-arrow-left-short"></i> Login</label></p>
       </div>
 
     </div>
@@ -305,66 +428,111 @@
       </header>
 
       <nav>
-        <a href="#" id="nav-home"    class="active" onclick="showSection('home',    this)">Home</a>
-        <a href="#" id="nav-menu"                   onclick="showSection('menu',    this)">Menu</a>
-        <a href="#" id="nav-about"                  onclick="showSection('about',   this)">About Us</a>
-        <a href="#" id="nav-contact"                onclick="showSection('contact', this)">Contact</a>
+        <a href="#" id="nav-home" class="active" onclick="showSection('home', this)">Home</a>
+        <a href="#" id="nav-menu" onclick="showSection('menu', this)">Menu</a>
+        <a href="#" id="nav-wishlist" onclick="showSection('wishlist', this)">Wishlist</a>
+        <a href="#" id="nav-about" onclick="showSection('about', this)">About Us</a>
+        <a href="#" id="nav-contact" onclick="showSection('contact', this)">Contact</a>
+        <a href="#" id="nav-cart" onclick="showSection('cart', this)">Cart 🛒</a>
       </nav>
+
+      <!-- WISHLIST SECTION -->
+      <div id="section-wishlist" style="display:none; padding:40px;">
+        <h1 style="text-align:center; margin-bottom:30px;">My Wishlist ❤️</h1>
+        <div id="wishlist-container" class="container"></div>
+      </div>
+
+      <!-- CART SECTION -->
+      <div id="section-cart" style="display:none; padding:40px;">
+        <h1 style="text-align:center; margin-bottom:30px;">Shopping Cart 🛒</h1>
+        <div id="cart-container" class="container"></div>
+        <h2 id="cart-total" style="text-align:center; color:#ff4d4d; margin-bottom:15px;">Total: ₹0</h2>
+        <div style="text-align:center;">
+          <button id="checkout-btn" class="btn" style="font-size:20px; padding:12px 35px; display:none;" onclick="openCheckoutModal()">Proceed to Checkout 💳</button>
+        </div>
+      </div>
 
       <!-- HOME SECTION -->
       <div id="section-home">
         <div class="hero">Delicious Food Delivered Fast</div>
 
         <div class="container">
-            <div class="col-md-3">
+          
+          <!-- Burger Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq2vVVGWx1u0-2Q7QB7FR1t3cdS28oX5FN3w&s" alt="Burger">
             <h2>Burger</h2>
             <p class="price">₹149</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Burger', 149, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq2vVVGWx1u0-2Q7QB7FR1t3cdS28oX5FN3w&s')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Burger','₹149','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq2vVVGWx1u0-2Q7QB7FR1t3cdS28oX5FN3w&s')">❤</button>
             </div>
           </div>
 
+          <!-- Pizza Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt6zKlWn0zYSDXv2XwOIDGWfsfi1OVDWmAcw&s" alt="Pizza">
             <h2>Pizza</h2>
             <p class="price">₹299</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Pizza', 299, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt6zKlWn0zYSDXv2XwOIDGWfsfi1OVDWmAcw&s')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Pizza','₹299','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt6zKlWn0zYSDXv2XwOIDGWfsfi1OVDWmAcw&s')">❤</button>
+            </div>
           </div>
 
+          <!-- Pasta Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtGxJQNLQ_tpfDqgGfFpEARarc7qNGTDVEYg&s" alt="Pasta">
             <h2>Pasta</h2>
             <p class="price">₹199</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Pasta', 199, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtGxJQNLQ_tpfDqgGfFpEARarc7qNGTDVEYg&s')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Pasta','₹199','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtGxJQNLQ_tpfDqgGfFpEARarc7qNGTDVEYg&s')">❤</button>
+            </div>
           </div>
 
+          <!-- PaniPuri Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIEkjFHJFxe3pjU9IooFnr9gI3SUZHsn1jA&s" alt="PaniPuri">
             <h2>PaniPuri</h2>
             <p class="price">₹150</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('PaniPuri', 150, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIEkjFHJFxe3pjU9IooFnr9gI3SUZHsn1jA&s')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('PaniPuri','₹150','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIEkjFHJFxe3pjU9IooFnr9gI3SUZHsn1jA&s')">❤</button>
+            </div>
           </div>
 
+          <!-- French Fries Card -->
           <div class="card">
             <img src="https://tse4.mm.bing.net/th/id/OIP.YXVbSMVELSgQ62ezc2F6_AHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="French Fries">
             <h2>French Fries</h2>
             <p class="price">₹99</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('French Fries',99,'https://tse4.mm.bing.net/th/id/OIP.YXVbSMVELSgQ62ezc2F6_AHaE8?rs=1&pid=ImgDetMain&o=7&rm=3')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('French Fries','₹99','https://tse4.mm.bing.net/th/id/OIP.YXVbSMVELSgQ62ezc2F6_AHaE8?rs=1&pid=ImgDetMain&o=7&rm=3')">❤</button>
+            </div>
           </div>
 
+          <!-- Sandwich Card -->
           <div class="card">
             <img src="https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg" alt="Sandwich">
             <h2>Sandwich</h2>
             <p class="price">₹120</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Sandwich', 120, 'https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Sandwich','₹120','https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg')">❤</button>
+            </div>
           </div>
 
+          <!-- Coffee Card -->
           <div class="card">
             <img src="https://neurosciencenews.com/files/2023/06/coffee-brain-caffeine-neuroscincces-1155x770.jpg" alt="Coffee">
             <h2>Coffee</h2>
             <p class="price">₹199</p>
-            <a href="#" class="btn">Order Now</a>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Coffee',199,'https://neurosciencenews.com/files/2023/06/coffee-brain-caffeine-neuroscincces-1155x770.jpg')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Coffee','₹199','https://neurosciencenews.com/files/2023/06/coffee-brain-caffeine-neuroscincces-1155x770.jpg')">❤</button>
+            </div>
           </div>
 
         </div>
@@ -385,61 +553,61 @@
             <td>Cheesy burger with crispy patty and fresh veggies</td>
             <td>₹149</td>
             <td>Available</td>
-        </tr>
+          </tr>
           <tr>
             <td>🍕 Pizza</td>
             <td>Loaded pizza with extra cheese and toppings</td>
             <td>₹299</td>
             <td>Available</td>
-        </tr>
+          </tr>
           <tr>
             <td>🍝 Pasta</td>
             <td>Creamy white sauce pasta with herbs</td>
             <td>₹199</td>
             <td>Available</td>
-        </tr>
+          </tr>
           <tr>
             <td>🥙 PaniPuri</td>
             <td>Spicy and tangy street style panipuri</td>
             <td>₹150</td>
             <td>Limited</td>
-        </tr>
+          </tr>
           <tr>
             <td>🌮 Tacos</td>
             <td>Mexican tacos filled with veggies and cheese</td>
             <td>₹220</td>
             <td>In Stock</td>
-        </tr>
+          </tr>
           <tr>
             <td>🍟 French Fries</td>
             <td>Crispy salted fries with tomato ketchup</td>
             <td>₹99</td>
             <td>Available</td>
-        </tr>
-         <tr>
+          </tr>
+          <tr>
             <td>🥪 Sandwich</td>
             <td>Grilled sandwich with cheese and veggies</td>
             <td>₹140</td>
             <td>Available</td>
-        </tr>
+          </tr>
           <tr>
             <td>🥤 Cold Drink</td>
             <td>Refreshing chilled soft drinks</td>
             <td>₹60</td>
             <td>Available</td>
-        </tr>
+          </tr>
           <tr>
             <td>🍦 Ice Cream</td>
             <td>Vanilla and chocolate ice cream scoops</td>
             <td>₹120</td>
             <td>Available</td>
-        </tr>
+          </tr>
           <tr>
             <td>☕ Coffee</td>
             <td>Hot creamy coffee with rich flavor</td>
             <td>₹80</td>
             <td>Available</td>
-        </tr>
+          </tr>
         </table>
       </div>
 
@@ -456,9 +624,9 @@
       <div id="section-contact" style="display:none; padding:60px 40px; text-align:center;">
         <h1 style="color:#222; margin-bottom:20px;">Contact Us</h1>
         <p style="font-size:18px; color:#555; line-height:2;">
-          📧 Email: support@foodiehub.com<br>
-          📞 Phone: +91 98765 43210<br>
-          📍 Address: 123 Food Street, Mumbai, India
+          Support Email: support@foodiehub.com<br>
+          Phone Contact: +91 98765 43210<br>
+          Our Location: 123 Food Street, Mumbai, India
         </p>
       </div>
 
@@ -467,11 +635,102 @@
       </footer>
 
     </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
+    <!-- ── CHECKOUT MODAL WITH ADDRESS & PAYMENT ── -->
+    <div class="payment-modal-overlay" id="payment-overlay">
+      <div class="payment-card">
+        <span class="close-payment" onclick="closeCheckoutModal()">&times;</span>
+        <h3 style="text-align:center; margin-bottom:5px; font-weight:bold;">Secure Checkout</h3>
+        <p id="payment-amount-text" style="text-align:center; color:#ff4d4d; font-size:18px; font-weight:bold;"></p>
+        
+        <div class="checkout-step">
+          <!-- ADDRESS SUB-FORM -->
+          <div class="section-title"><i class="bi bi-geo-alt-fill"></i> Delivery Address</div>
+          
+          <div class="input-group-custom">
+            <i class="bi bi-house-door"></i>
+            <input type="text" id="address-flat" placeholder="Flat / House No. / Building Name">
+          </div>
+          <div class="err-msg" id="err-addr-flat">Please specify your house or flat details.</div>
+
+          <div class="input-group-custom">
+            <i class="bi bi-map"></i>
+            <input type="text" id="address-street" placeholder="Street Address / Colony / Area">
+          </div>
+          <div class="err-msg" id="err-addr-street">Please specify your street address.</div>
+
+          <div class="input-group-custom">
+            <i class="bi bi-compass"></i>
+            <input type="text" id="address-landmark" placeholder="Landmark (e.g. Near Metro Station)">
+          </div>
+          <div class="err-msg" id="err-addr-landmark">Please mention a nearby landmark.</div>
+
+          <!-- PAYMENT METHODS TAB -->
+          <div class="section-title"><i class="bi bi-credit-card-fill"></i> Select Payment Method</div>
+          <div class="pay-methods">
+            <div class="method-tab active" id="tab-upi" onclick="switchPayMethod('upi')">
+              <i class="bi bi-qr-code-scan"></i> UPI
+            </div>
+            <div class="method-tab" id="tab-card" onclick="switchPayMethod('card')">
+              <i class="bi bi-credit-card"></i> Card
+            </div>
+            <div class="method-tab" id="tab-cod" onclick="switchPayMethod('cod')">
+              <i class="bi bi-cash-stack"></i> COD
+            </div>
+          </div>
+
+          <!-- UPI FIELD -->
+          <div class="method-content active" id="content-upi">
+            <div class="input-group-custom">
+              <i class="bi bi-at"></i>
+              <input type="text" id="pay-upi-id" placeholder="Enter UPI ID (e.g., username@upi)">
+            </div>
+            <div class="err-msg" id="err-upi">Please enter a valid UPI ID format.</div>
+          </div>
+
+          <!-- CARD FIELDS -->
+          <div class="method-content" id="content-card">
+            <div class="input-group-custom">
+              <i class="bi bi-credit-card-2-front"></i>
+              <input type="text" id="pay-card-num" placeholder="Card Number (16 Digits)" maxlength="16">
+            </div>
+            <div class="err-msg" id="err-card-num">Enter a 16-digit card number.</div>
+            
+            <div class="card-row">
+              <div style="flex:1;">
+                <div class="input-group-custom" style="margin-top:0;">
+                  <i class="bi bi-calendar3"></i>
+                  <input type="text" id="pay-card-expiry" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="err-msg" id="err-card-exp">Enter format MM/YY.</div>
+              </div>
+              <div style="flex:1;">
+                <div class="input-group-custom" style="margin-top:0;">
+                  <i class="bi bi-shield-lock"></i>
+                  <input type="password" id="pay-card-cvv" placeholder="CVV" maxlength="3">
+                </div>
+                <div class="err-msg" id="err-card-cvv">Enter 3 digit CVV.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COD INFO -->
+          <div class="method-content" id="content-cod">
+            <p style="color:#555; text-align:center; padding:10px 0; font-size:14px; margin:0;">
+              <i class="bi bi-truck" style="font-size: 22px; color: green; display:block; margin-bottom:5px;"></i>
+              Pay in cash or digital wallet directly to our driver when food is delivered.
+            </p>
+          </div>
+
+          <button class="btn-form" onclick="processPayment()"><i class="bi bi-bag-check-fill"></i> Place Order</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <script>
-      // ── Saved users (localStorage so accounts persist) ──
+      // ── Saved users ──
       let users = JSON.parse(localStorage.getItem('fh_users') || '{}');
 
       // ── Switch between Login / Signup boxes ──
@@ -480,10 +739,12 @@
         document.getElementById('signup-box').style.display = mode === 'signup' ? 'block' : 'none';
       }
 
-      // ── Helper: show/hide error under a field ──
+      // ── Helper: show/hide error ──
       function setError(inputId, errId, show) {
-        document.getElementById(inputId).classList.toggle('error', show);
-        document.getElementById(errId).classList.toggle('show', show);
+        const inputEl = document.getElementById(inputId);
+        const errEl = document.getElementById(errId);
+        if(inputEl) inputEl.classList.toggle('error', show);
+        if(errEl) errEl.classList.toggle('show', show);
       }
 
       // ── LOGIN ──
@@ -492,33 +753,28 @@
         const pass  = document.getElementById('login-pass').value;
         let ok = true;
 
-        // Validate phone — must be exactly 10 digits
         const phoneOk = /^\d{10}$/.test(phone);
         setError('login-phone', 'err-lphone', !phoneOk);
         if (!phoneOk) ok = false;
 
-        // Validate password — must be 6+ chars
         const passOk = pass.length >= 6;
         setError('login-pass', 'err-lpass', !passOk);
         if (!passOk) ok = false;
 
-        if (!ok) return; // stop here if any field is wrong
+        if (!ok) return;
 
-        // Check if account exists
         if (!users[phone]) {
           setError('login-phone', 'err-lphone', true);
           document.getElementById('err-lphone').textContent = 'No account found. Please register first.';
           return;
         }
 
-        // Check password matches
         if (users[phone].pass !== pass) {
           setError('login-pass', 'err-lpass', true);
           document.getElementById('err-lpass').textContent = 'Incorrect password. Please try again.';
           return;
         }
 
-        // All good — enter the site
         enterSite();
       }
 
@@ -530,51 +786,164 @@
         const confirm = document.getElementById('signup-confirm').value;
         let ok = true;
 
-        // Name must not be empty
         setError('signup-name', 'err-sname', name.length < 2);
         if (name.length < 2) ok = false;
 
-        // Phone must be 10 digits
         const phoneOk = /^\d{10}$/.test(phone);
         setError('signup-phone', 'err-sphone', !phoneOk);
         if (!phoneOk) ok = false;
 
-        // Password 6+ chars
         const passOk = pass.length >= 6;
         setError('signup-pass', 'err-spass', !passOk);
         if (!passOk) ok = false;
 
-        // Confirm password must match
         const confirmOk = confirm === pass && confirm.length > 0;
         setError('signup-confirm', 'err-sconfirm', !confirmOk);
         if (!confirmOk) ok = false;
 
-        if (!ok) return; // stop here if any field is wrong
+        if (!ok) return;
 
-        // Check number not already registered
         if (users[phone]) {
           setError('signup-phone', 'err-sphone', true);
           document.getElementById('err-sphone').textContent = 'This number is already registered. Please login.';
           return;
         }
 
-        // Save new user and enter site
         users[phone] = { name, pass };
         localStorage.setItem('fh_users', JSON.stringify(users));
         enterSite();
       }
 
-      // ── Enter site after successful auth ──
       function enterSite() {
         document.getElementById('auth-overlay').style.display = 'none';
         document.getElementById('main-website').style.display = 'block';
       }
 
-      // ── Menu section show/hide (your original logic) ──
+      // ── WISHLIST ──
+      let wishlist = JSON.parse(localStorage.getItem('fh_wishlist') || '[]');
+
+      function addToWishlist(name, price, image) {
+        const exists = wishlist.find(item => item.name === name);
+        if (exists) {
+          alert(name + ' is already in wishlist!');
+          return;
+        }
+        wishlist.push({ name, price, image });
+        localStorage.setItem('fh_wishlist', JSON.stringify(wishlist));
+        renderWishlist();
+        alert(name + ' added to wishlist ❤️');
+      }
+
+      function removeFromWishlist(name) {
+        wishlist = wishlist.filter(item => item.name !== name);
+        localStorage.setItem('fh_wishlist', JSON.stringify(wishlist));
+        renderWishlist();
+      }
+
+      function renderWishlist() {
+        const container = document.getElementById('wishlist-container');
+        if(!container) return;
+        container.innerHTML = '';
+
+        if (wishlist.length === 0) {
+          container.innerHTML = '<h2 style="color:#555;">Your wishlist is empty.</h2>';
+          return;
+        }
+
+        wishlist.forEach(item => {
+          container.innerHTML += `
+            <div class="card">
+              <img src="${item.image}">
+              <h2>${item.name}</h2>
+              <p class="price">${item.price}</p>
+              <button class="btn-form" onclick="removeFromWishlist('${item.name}')">Remove</button>
+            </div>
+          `;
+        });
+      }
+
+      // ── CART ──
+      let cart = JSON.parse(localStorage.getItem('fh_cart') || '[]');
+      let currentCartTotal = 0;
+
+      function addToCart(name, price, image) {
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          cart.push({ name, price, image, qty: 1 });
+        }
+        localStorage.setItem('fh_cart', JSON.stringify(cart));
+        renderCart();
+        alert(name + ' added to cart 🛒');
+      }
+
+      function removeFromCart(name) {
+        cart = cart.filter(item => item.name !== name);
+        localStorage.setItem('fh_cart', JSON.stringify(cart));
+        renderCart();
+      }
+
+      function changeQty(name, type) {
+        cart.forEach(item => {
+          if (item.name === name) {
+            if (type === 'plus') item.qty += 1;
+            if (type === 'minus') {
+              item.qty -= 1;
+              if (item.qty <= 0) removeFromCart(name);
+            }
+          }
+        });
+        localStorage.setItem('fh_cart', JSON.stringify(cart));
+        renderCart();
+      }
+
+      function renderCart() {
+        const container = document.getElementById('cart-container');
+        const totalEl = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if(!container || !totalEl) return;
+        container.innerHTML = '';
+        currentCartTotal = 0;
+
+        if (cart.length === 0) {
+          container.innerHTML = '<h2 style="color:#555;">Your cart is empty.</h2>';
+          totalEl.innerHTML = 'Total: ₹0';
+          if(checkoutBtn) checkoutBtn.style.display = 'none';
+          return;
+        }
+
+        cart.forEach(item => {
+          currentCartTotal += item.price * item.qty;
+          container.innerHTML += `
+            <div class="card">
+              <img src="${item.image}">
+              <h2>${item.name}</h2>
+              <p class="price">₹${item.price}</p>
+              <h3>Qty: ${item.qty}</h3>
+              <div style="display:flex; justify-content:center; gap:10px; margin-bottom:15px;">
+                <button class="wishlist-btn" onclick="changeQty('${item.name}','minus')">-</button>
+                <button class="wishlist-btn" onclick="changeQty('${item.name}','plus')">+</button>
+              </div>
+              <button class="btn-form" onclick="removeFromCart('${item.name}')">Remove</button>
+            </div>
+          `;
+        });
+        totalEl.innerHTML = 'Total: ₹' + currentCartTotal;
+        if(checkoutBtn) checkoutBtn.style.display = 'inline-block';
+      }
+
+      // Initial Renders
+      renderCart();
+      renderWishlist();
+
+      // ── Sections Switch Logic ──
       const sections = {
-        home:    document.getElementById('section-home'),
-        menu:    document.getElementById('section-menu'),
-        about:   document.getElementById('section-about'),
+        home: document.getElementById('section-home'),
+        menu: document.getElementById('section-menu'),
+        wishlist: document.getElementById('section-wishlist'),
+        cart: document.getElementById('section-cart'),
+        about: document.getElementById('section-about'),
         contact: document.getElementById('section-contact'),
       };
 
@@ -602,7 +971,127 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }
-    </script>
 
+      // ── CHECKOUT & ADDRESS VERIFICATION LOGIC ──
+      let activeMethod = 'upi';
+
+      function openCheckoutModal() {
+        document.getElementById('payment-amount-text').innerText = "Amount to Pay: ₹" + currentCartTotal;
+        document.getElementById('payment-overlay').classList.add('show');
+      }
+
+      function closeCheckoutModal() {
+        document.getElementById('payment-overlay').classList.remove('show');
+      }
+
+      function switchPayMethod(method) {
+        activeMethod = method;
+        document.querySelectorAll('.method-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.method-content').forEach(content => content.classList.remove('active'));
+        
+        document.getElementById('tab-' + method).classList.add('active');
+        document.getElementById('content-' + method).classList.add('active');
+      }
+
+      function processPayment() {
+        let isValid = true;
+
+        // 1. Validate Address Fields First
+        const flat = document.getElementById('address-flat').value.trim();
+        const street = document.getElementById('address-street').value.trim();
+        const landmark = document.getElementById('address-landmark').value.trim();
+
+        if (flat.length < 2) {
+          setError('address-flat', 'err-addr-flat', true);
+          isValid = false;
+        } else {
+          setError('address-flat', 'err-addr-flat', false);
+        }
+
+        if (street.length < 4) {
+          setError('address-street', 'err-addr-street', true);
+          isValid = false;
+        } else {
+          setError('address-street', 'err-addr-street', false);
+        }
+
+        if (landmark.length < 3) {
+          setError('address-landmark', 'err-addr-landmark', true);
+          isValid = false;
+        } else {
+          setError('address-landmark', 'err-addr-landmark', false);
+        }
+
+        // 2. Validate Active Payment Method Form Fields
+        if (activeMethod === 'upi') {
+          const upiId = document.getElementById('pay-upi-id').value.trim();
+          const upiPattern = /^[\w.-]+@[\w.-]+$/;
+          if (!upiPattern.test(upiId)) {
+            setError('pay-upi-id', 'err-upi', true);
+            isValid = false;
+          } else {
+            setError('pay-upi-id', 'err-upi', false);
+          }
+        } 
+        else if (activeMethod === 'card') {
+          const cardNum = document.getElementById('pay-card-num').value.trim();
+          const expiry = document.getElementById('pay-card-expiry').value.trim();
+          const cvv = document.getElementById('pay-card-cvv').value.trim();
+
+          if (!/^\d{16}$/.test(cardNum)) {
+            setError('pay-card-num', 'err-card-num', true);
+            isValid = false;
+          } else {
+            setError('pay-card-num', 'err-card-num', false);
+          }
+
+          if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+            setError('pay-card-expiry', 'err-card-exp', true);
+            isValid = false;
+          } else {
+            setError('pay-card-expiry', 'err-card-exp', false);
+          }
+
+          if (!/^\d{3}$/.test(cvv)) {
+            setError('pay-card-cvv', 'err-card-cvv', true);
+            isValid = false;
+          } else {
+            setError('pay-card-cvv', 'err-card-cvv', false);
+          }
+        }
+
+        if (!isValid) return;
+
+        // Process final response
+        const fullDeliveryAddress = `${flat}, ${street} (Landmark: ${landmark})`;
+        
+        alert("Validating delivery route and running payment process securely...");
+        alert(`🎉 Success! Order placed successfully via ${activeMethod.toUpperCase()}.\n\n📍 Delivering to: ${fullDeliveryAddress}\n\nOur delivery agent will arrive within 30 minutes!`);
+        
+        // Reset inputs and clear operational data state
+        document.getElementById('address-flat').value = '';
+        document.getElementById('address-street').value = '';
+        document.getElementById('address-landmark').value = '';
+        document.getElementById('pay-upi-id').value = '';
+        document.getElementById('pay-card-num').value = '';
+        document.getElementById('pay-card-expiry').value = '';
+        document.getElementById('pay-card-cvv').value = '';
+
+        cart = [];
+        localStorage.setItem('fh_cart', JSON.stringify(cart));
+        renderCart();
+        closeCheckoutModal();
+        showSection('home', document.getElementById('nav-home'));
+      }
+
+      // Enforce expiry date typing formatting (adds '/')
+      document.getElementById('pay-card-expiry').addEventListener('input', function (e) {
+        let input = e.target.value.replace(/\D/g, '');
+        if (input.length > 2) {
+          input = input.substring(0, 2) + '/' + input.substring(2, 4);
+        }
+        e.target.value = input;
+      });
+    </script>
   </body>
 </html>
