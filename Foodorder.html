@@ -3,7 +3,6 @@
   <head>
     <title>Food Order Website</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <!-- BOOTSTRAP ICONS CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
@@ -356,6 +355,53 @@
         color: #333;
         text-align: left;
       }
+      /* ABOUT & CONTACT SECTION */
+
+.info-section{
+  display: none;
+  padding: 40px;
+}
+
+.info-section h1{
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 40px;
+  color: #222;
+  font-weight: bold;
+}
+
+.info-box{
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.info-box p{
+  font-size: 20px;
+  color: #555;
+  line-height: 1.9;
+}
+/* FIX FOOTER POSITION */
+
+body{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-website{
+  display: none;
+  flex: 1;
+  flex-direction: column;
+}
+
+footer{
+  margin-top: auto;
+}
     </style>
   </head>
   <body>
@@ -369,8 +415,7 @@
 
         <div class="input-group-custom">
           <i class="bi bi-telephone"></i>
-          <input type="tel" id="login-phone" placeholder="Enter Mobile Number (10 digits)" maxlength="10">
-        </div>
+          <input type="tel" id="login-phone" placeholder="Enter Mobile Number (10 digits)" maxlength="10"></div>
         <div class="err-msg" id="err-lphone">Please enter a valid 10-digit mobile number.</div>
 
         <div class="input-group-custom">
@@ -383,7 +428,6 @@
 
         <p>Don't have an account? <label onclick="switchForm('signup')">Register <i class="bi bi-arrow-right-short"></i></label></p>
       </div>
-
       <!-- SIGNUP BOX -->
       <div class="signup-box" id="signup-box">
         <h1><i class="bi bi-person-plus"></i>Register</h1>
@@ -420,7 +464,7 @@
     </div>
 
     <!-- MAIN WEBSITE -->
-    <div class="main-website" id="main-website">
+    <div class="main-website" id="main-website" style="display:none;">
 
       <header>
         <h1>Foodie Hub</h1>
@@ -611,24 +655,39 @@
         </table>
       </div>
 
-      <!-- ABOUT SECTION -->
-      <div id="section-about" style="display:none; padding:60px 40px; text-align:center;">
-        <h1 style="color:#222; margin-bottom:20px;">About Foodie Hub</h1>
-        <p style="font-size:18px; color:#555; max-width:600px; margin:auto; line-height:1.8;">
-          Foodie Hub is your go-to platform for ordering fresh, delicious meals from the comfort of your home.
-          We partner with the best local chefs to bring you quality food, fast delivery, and great taste — every time!
-        </p>
-      </div>
+<!-- ABOUT SECTION -->
+     <div id="section-about" class="info-section">
+  
+  <h1>About Us</h1>
 
-      <!-- CONTACT SECTION -->
-      <div id="section-contact" style="display:none; padding:60px 40px; text-align:center;">
-        <h1 style="color:#222; margin-bottom:20px;">Contact Us</h1>
-        <p style="font-size:18px; color:#555; line-height:2;">
-          Support Email: support@foodiehub.com<br>
-          Phone Contact: +91 98765 43210<br>
-          Our Location: 123 Food Street, Mumbai, India
-        </p>
-      </div>
+  <div class="info-box">
+    <p>
+      Foodie Hub is your go-to platform for ordering fresh,
+      delicious meals from the comfort of your home.
+      We partner with the best local chefs to bring you
+      quality food, fast delivery, and amazing taste every time.
+    </p>
+  </div>
+
+</div>
+
+
+<!-- CONTACT SECTION -->
+<div id="section-contact" class="info-section">
+
+  <h1>Contact Us</h1>
+
+  <div class="info-box">
+    <p>
+      📧 Support Email: support@foodiehub.com <br><br>
+
+      📞 Phone Contact: +91 98765 43210 <br><br>
+
+      📍 Our Location: 123 Food Street, Mumbai, India
+    </p>
+  </div>
+
+</div>
 
       <footer>
         <p>© 2026 Foodie Hub | All Rights Reserved</p>
@@ -816,7 +875,7 @@
 
       function enterSite() {
         document.getElementById('auth-overlay').style.display = 'none';
-        document.getElementById('main-website').style.display = 'block';
+        document.getElementById('main-website').style.display = 'flex';
       }
 
       // ── WISHLIST ──
