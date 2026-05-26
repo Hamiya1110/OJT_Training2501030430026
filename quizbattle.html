@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuizBattle ⚡</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #12121a;
+      --card:      #1a1a28;
+      --border:    #2a2a45;
+      --accent:    #ff3c3c;
+      --gold:      #ffd23f;
+      --cyan:      #00e5ff;
+      --green:     #39ff14;
+      --purple:    #9d4edd;
+      --text:      #e8e8f0;
+      --muted:     #6a6a8a;
+      --glow-red:  0 0 20px rgba(255,60,60,0.5);
+      --glow-cyan: 0 0 20px rgba(0,229,255,0.4);
+      --glow-gold: 0 0 20px rgba(255,210,63,0.5);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events:none;
+      z-index:9999;
+    }
+
+    /* ── ANIMATED BG GRID ── */
+    .bg-grid {
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(rgba(255,60,60,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,60,60,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 20s linear infinite;
+      pointer-events:none; z-index:0;
+    }
+    @keyframes gridMove {
+      0%   { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      text-shadow: var(--glow-red);
+    }
+    .nav-links a:hover { text-shadow: var(--glow-cyan); }
+
+    /* ── SCREENS ── */
+    .screen { display:none; position:relative; z-index:5; }
+    .screen.active { display:block; }
+    #screen-home.active { display:flex; }
+
+    .hero-tag {
+      font-family:'Share Tech Mono', monospace;
+      animation: fadeUp .6s ease both;
+    }
+    .hero-title {
+      font-family:'Bebas Neue', sans-serif;
+      background: linear-gradient(135deg, #ff3c3c 0%, #ff8c42 40%, #ffd23f 70%, #ff3c3c 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradShift 3s ease infinite, fadeUp .7s ease both;
+      animation-delay: 0s, .1s;
+    }
+    @keyframes gradShift {
+      0%,100% { background-position:0% 50%; }
+      50%      { background-position:100% 50%; }
+    }
+    .hero-sub { animation: fadeUp .8s ease .2s both; }
+    .hero-buttons { animation: fadeUp .8s ease .3s both; }
+    .hero-stats { animation: fadeUp .8s ease .4s both; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      font-family:'Rajdhani',sans-serif;
+      position:relative; overflow:hidden; transition:all .25s;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+    .btn::before {
+      content:''; position:absolute; inset:0;
+      background: rgba(255,255,255,0.1);
+      transform: translateX(-100%); transition: transform .3s;
+    }
+    .btn:hover::before { transform:translateX(0); }
+    .btn-primary { background: var(--accent); color:#fff; box-shadow: var(--glow-red); }
+    .btn-primary:hover { box-shadow: 0 0 35px rgba(255,60,60,0.8); transform:translateY(-2px); }
+    .btn-secondary { background: transparent; color:var(--cyan); border: 2px solid var(--cyan); box-shadow: var(--glow-cyan); }
+    .btn-secondary:hover { background:rgba(0,229,255,0.1); transform:translateY(-2px); }
+    .btn-gold { background: var(--gold); color:#0a0a0f; box-shadow: var(--glow-gold); }
+    .btn-gold:hover { box-shadow: 0 0 35px rgba(255,210,63,0.8); transform:translateY(-2px); }
+
+    .stat-num { font-family:'Bebas Neue',sans-serif; color:var(--gold); }
+    .section-title { font-family:'Bebas Neue',sans-serif; }
+
+    /* ── CATEGORIES ── */
+    .cat-card {
+      background: var(--card); border: 1px solid var(--border);
+      cursor:pointer; position:relative; overflow:hidden; transition: all .3s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .cat-card::before {
+      content:''; position:absolute; bottom:0; left:0; width:100%; height:3px;
+      background: var(--cat-color, var(--accent)); transform: scaleX(0); transform-origin:left; transition: transform .3s;
+    }
+    .cat-card:hover { border-color: var(--cat-color, var(--accent)); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+    .cat-card:hover::before { transform:scaleX(1); }
+    .cat-name { font-family:'Bebas Neue',sans-serif; }
+    .cat-diff { font-family:'Share Tech Mono',monospace; }
+    .diff-easy  { color:var(--green);  border-color:var(--green); }
+    .diff-med   { color:var(--gold);   border-color:var(--gold); }
+    .diff-hard  { color:var(--accent); border-color:var(--accent); }
+
+    /* ── QUIZ SCREEN ── */
+    .quiz-cat-badge { font-family:'Share Tech Mono',monospace; border:1px solid var(--cyan); color:var(--cyan); }
+    .quiz-qnum { font-family:'Bebas Neue',sans-serif; color:var(--muted); }
+    .timer-bar-bg { background:var(--surface); border:1px solid var(--border); }
+    .timer-bar { background:var(--green); transition: width .1s linear, background .3s; }
+    .timer-num { font-family:'Share Tech Mono',monospace; color:var(--green); transition: color .3s; }
+    .timer-num.urgent { color:var(--accent); }
+    .timer-bar.urgent { background:var(--accent); }
+    .live-score { font-family:'Bebas Neue',sans-serif; color:var(--gold); }
+    .p-dot { background:var(--surface); border:1px solid var(--border); transition:all .3s; }
+    .p-dot.done-correct { background:var(--green); border-color:var(--green); }
+    .p-dot.done-wrong   { background:var(--accent); border-color:var(--accent); }
+    .p-dot.current      { background:var(--cyan); border-color:var(--cyan); box-shadow:var(--glow-cyan); }
+
+    .question-card {
+      background:var(--card); border:1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    }
+    .answer-btn {
+      background:var(--surface); border:1px solid var(--border); color:var(--text); transition: all .2s;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100%-6px) 100%, 0% 100%);
+    }
+    .answer-btn .ans-letter { font-family:'Bebas Neue',sans-serif; color:var(--muted); }
+    .answer-btn:hover:not(:disabled) { border-color:var(--cyan); color:var(--cyan); background:rgba(0,229,255,0.07); transform:translateX(4px); }
+    .answer-btn.correct { border-color:var(--green) !important; color:var(--green) !important; background:rgba(57,255,20,0.1) !important; box-shadow: 0 0 16px rgba(57,255,20,0.3); }
+    .answer-btn.wrong { border-color:var(--accent) !important; color:var(--accent) !important; background:rgba(255,60,60,0.1) !important; box-shadow: 0 0 16px rgba(255,60,60,0.3); }
+
+    .feedback-bar.correct-fb { background:rgba(57,255,20,0.1); border:1px solid var(--green); color:var(--green); }
+    .feedback-bar.wrong-fb { background:rgba(255,60,60,0.1); border:1px solid var(--accent); color:var(--accent); }
+
+    /* ── RESULTS ── */
+    .result-grade { font-family:'Bebas Neue',sans-serif; line-height:1; }
+    .result-score-big { font-family:'Bebas Neue',sans-serif; line-height:1; }
+    .rs-num { font-family:'Bebas Neue',sans-serif; }
+
+    /* ── LEADERBOARD ── */
+    .lb-table th { font-family:'Share Tech Mono',monospace; color:var(--muted); border-bottom:1px solid var(--border); }
+    .lb-table td { border-bottom:1px solid rgba(42,42,69,.4); transition:background .2s; }
+    .lb-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .lb-rank { font-family:'Bebas Neue',sans-serif; }
+    .lb-rank.gold   { color:var(--gold);  text-shadow:var(--glow-gold); }
+    .lb-rank.silver { color:#c0c0c0; }
+    .lb-rank.bronze { color:#cd7f32; }
+    .lb-avatar { background:linear-gradient(135deg,var(--accent),var(--purple)); font-family:'Bebas Neue',sans-serif; }
+    .lb-score { font-family:'Bebas Neue',sans-serif; color:var(--gold); }
+    .lb-cat-badge { font-family:'Share Tech Mono',monospace; background:rgba(0,229,255,0.1); color:var(--cyan); border:1px solid rgba(0,229,255,0.2); }
+
+    /* ── MODALS ── */
+    .modal-overlay { background:rgba(0,0,0,.8); }
+    .modal { background:var(--card); border:1px solid var(--border); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); animation: fadeUp .3s ease; }
+    .modal h2 { font-family:'Bebas Neue',sans-serif; color:var(--accent); }
+    .form-group input, .form-group select { background:var(--surface); border:1px solid var(--border); color:var(--text); outline:none; transition:border-color .2s; }
+    .form-group input:focus, .form-group select:focus { border-color:var(--cyan); }
+
+    /* ── TOAST ── */
+    #toast { font-family:'Share Tech Mono',monospace; border:1px solid var(--green); color:var(--green); background:rgba(10,10,15,.95); transition:all .35s ease; }
+    .combo-flash { font-family:'Bebas Neue',sans-serif; color:var(--gold); text-shadow:var(--glow-gold); transition:none; }
+    .combo-flash.pop { animation: comboPop .6s ease forwards; }
+    @keyframes comboPop {
+      0%   { transform:translate(-50%,-50%) scale(0); opacity:1; }
+      40%  { transform:translate(-50%,-50%) scale(1.3); opacity:1; }
+      100% { transform:translate(-50%,-55%) scale(1); opacity:0; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fade-in { animation: fadeUp .4s ease both; }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--muted); }
+  </style>
+</head>
+<body class="min-h-screen overflow-x-hidden">
+
+<div class="bg-grid"></div>
+
+<nav class="relative z-10 flex items-center justify-between py-[18px] px-5 sm:px-10 border-b border-[var(--border)] bg-[rgba(10,10,15,0.9)] backdrop-blur-[10px]">
+  <div class="nav-logo text-[2rem] tracking-[3px] text-[var(--accent)]">Quiz<span class="text-[var(--cyan)]">Battle</span></div>
+  <div class="nav-links flex gap-4 sm:gap-[30px]">
+    <a class="nav-link active font-semibold text-base tracking-[1px] text-[var(--accent)] uppercase transition-all duration-200 cursor-pointer" data-screen="home">Home</a>
+    <a class="nav-link font-semibold text-base tracking-[1px] text-[var(--muted)] uppercase transition-all duration-200 cursor-pointer" data-screen="categories">Play</a>
+    <a class="nav-link font-semibold text-base tracking-[1px] text-[var(--muted)] uppercase transition-all duration-200 cursor-pointer" data-screen="leaderboard">Ranks</a>
+  </div>
+</nav>
+
+<div class="screen active min-h-[calc(100vh-73px)] flex-col items-center justify-center text-center py-[60px] px-5" id="screen-home">
+  <div class="hero-tag text-[0.8rem] tracking-[4px] text-[var(--cyan)] uppercase mb-5">⚡ The Ultimate Knowledge Arena</div>
+  <h1 class="hero-title text-[clamp(5rem,14vw,11rem)] leading-[0.9]">QuizBattle</h1>
+  <p class="hero-sub text-[1.3rem] font-medium text-[var(--muted)] max-w-[520px] line-clamp-[1.6] mt-5 mb-10 mx-auto">Choose your category. Answer fast. Dominate the leaderboard. Only the sharpest minds survive.</p>
+  <div class="hero-buttons flex gap-4 flex-wrap justify-center">
+    <button class="btn btn-primary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-play-now">⚔ Enter Battle</button>
+    <button class="btn btn-secondary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-leaderboard-hero">🏆 Top Fighters</button>
+  </div>
+  <div class="hero-stats flex gap-8 sm:gap-[50px] mt-[60px] flex-wrap justify-center">
+    <div class="stat text-center"><span class="stat-num text-[2.8rem] block" id="s-players">1,247</span><span class="stat-label text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Players</span></div>
+    <div class="stat text-center"><span class="stat-num text-[2.8rem] block" id="s-questions">500+</span><span class="stat-label text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Questions</span></div>
+    <div class="stat text-center"><span class="stat-num text-[2.8rem] block" id="s-categories">8</span><span class="stat-label text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Categories</span></div>
+    <div class="stat text-center"><span class="stat-num text-[2.8rem] block" id="s-battles">9,834</span><span class="stat-label text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Battles</span></div>
+  </div>
+</div>
+
+<div class="screen min-h-[calc(100vh-73px)]" id="screen-categories">
+  <div class="py-10 sm:py-[60px] px-5 sm:px-10 max-w-[1100px] mx-auto">
+    <h2 class="section-title text-[3rem] tracking-[3px] text-[var(--text)] mb-2">Choose Your <span class="text-[var(--accent)]">Arena</span></h2>
+    <p class="text-[var(--muted)] mb-10 text-[1.05rem]">Select a category and difficulty to begin your battle</p>
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5" id="categories-grid"></div>
+  </div>
+</div>
+
+<div class="screen min-h-[calc(100vh-73px)] py-10 px-5" id="screen-quiz">
+  <div class="max-w-[760px] mx-auto mb-[30px] flex items-center justify-between flex-wrap gap-[14px]">
+    <div class="flex gap-5 items-center">
+      <div class="text-[0.75rem] tracking-[2px] py-[5px] px-3 uppercase quiz-cat-badge" id="quiz-cat-label">—</div>
+      <div class="text-[1.4rem] tracking-[2px] quiz-qnum" id="quiz-qnum">Q 1 / 10</div>
+    </div>
+    <div class="timer-wrap flex items-center gap-[10px]">
+      <div class="w-[160px] h-2 rounded-[4px] overflow-hidden timer-bar-bg"><div class="h-full timer-bar" id="timer-bar"></div></div>
+      <div class="text-[1.1rem] min-w-[28px] text-right timer-num" id="timer-num">15</div>
+    </div>
+    <div class="live-score text-[1.5rem] tracking-[2px]">⚡ <span id="live-score">0</span> pts</div>
+  </div>
+  <div class="max-w-[760px] mx-auto mb-[30px] flex gap-2 flex-wrap" id="progress-dots"></div>
+  <div class="max-w-[760px] mx-auto py-10 px-6 sm:px-10 question-card">
+    <div class="text-[1.45rem] font-semibold leading-[1.5] mb-8 text-[var(--text)]" id="question-text">Loading…</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-[14px]" id="answers-grid"></div>
+  </div>
+  <div class="max-w-[760px] mx-auto mt-5 py-[14px] px-5 hidden items-center gap-3 font-semibold text-[1.1rem] tracking-[0.5px] feedback-bar" id="feedback-bar">
+    <span class="text-[1.4rem] feedback-icon"></span>
+    <span id="feedback-text"></span>
+  </div>
+  <div class="max-w-[760px] mx-auto mt-6 flex justify-end">
+    <button class="btn btn-secondary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-next" style="display:none">Next ➜</button>
+  </div>
+</div>
+
+<div class="screen min-h-[calc(100vh-73px)] hidden flex-col items-center justify-center py-[60px] px-5 text-center" id="screen-results">
+  <div class="result-grade text-[clamp(4rem,12vw,8rem)] mb-2" id="result-grade"></div>
+  <div class="text-[1.1rem] text-[var(--muted)] tracking-[3px] uppercase mb-[30px]" id="result-label"></div>
+  <div class="result-score-big text-[clamp(3rem,10vw,6rem)]" id="result-score-big"></div>
+  <div class="text-[var(--muted)] mb-10 text-base" id="result-score-sub"></div>
+  <div class="flex gap-10 justify-center flex-wrap mb-[50px]">
+    <div class="rs text-center"><span class="rs-num text-[2.5rem] block" id="rs-correct" style="color:var(--green)"></span><span class="text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Correct</span></div>
+    <div class="rs text-center"><span class="rs-num text-[2.5rem] block" id="rs-wrong" style="color:var(--accent)"></span><span class="text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Wrong</span></div>
+    <div class="rs text-center"><span class="rs-num text-[2.5rem] block" id="rs-streak" style="color:var(--gold)"></span><span class="text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Best Streak</span></div>
+    <div class="rs text-center"><span class="rs-num text-[2.5rem] block" id="rs-time" style="color:var(--cyan)"></span><span class="text-[0.8rem] tracking-[2px] text-[var(--muted)] uppercase">Avg Time</span></div>
+  </div>
+  <div class="flex gap-[14px] flex-wrap justify-center">
+    <button class="btn btn-primary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-retry">⚔ Battle Again</button>
+    <button class="btn btn-gold font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-save-score">💾 Save Score</button>
+    <button class="btn btn-secondary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-home-result">🏠 Home</button>
+  </div>
+</div>
+
+<div class="screen min-h-[calc(100vh-73px)]" id="screen-leaderboard">
+  <div class="py-10 sm:py-[60px] px-5 sm:px-10 max-w-[1100px] mx-auto">
+    <h2 class="section-title text-[3rem] tracking-[3px] text-[var(--text)] mb-2">Hall of <span class="text-[var(--accent)]">Champions</span></h2>
+    <p class="text-[var(--muted)] mb-10 text-[1.05rem]">The sharpest minds in the arena</p>
+    <table class="w-full border-collapse mt-2 lb-table">
+      <thead>
+        <tr>
+          <th class="text-[0.75rem] tracking-[2px] uppercase p-[12px_16px] text-left">#</th>
+          <th class="text-[0.75rem] tracking-[2px] uppercase p-[12px_16px] text-left">Fighter</th>
+          <th class="text-[0.75rem] tracking-[2px] uppercase p-[12px_16px] text-left">Score</th>
+          <th class="text-[0.75rem] tracking-[2px] uppercase p-[12px_16px] text-left">Category</th>
+          <th class="text-[0.75rem] tracking-[2px] uppercase p-[12px_16px] text-left">Accuracy</th>
+        </tr>
+      </thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay fixed inset-0 z-[100] hidden items-center justify-center backdrop-blur-sm" id="modal-name">
+  <div class="modal max-w-[460px] w-[90%] p-10">
+    <h2 class="text-[2rem] tracking-[2px] mb-5">Enter Battle</h2>
+    <p class="text-[var(--muted)] leading-[1.6] mb-5">What should we call you on the battlefield, fighter?</p>
+    <div class="form-group mb-[18px]">
+      <label class="block text-[0.8rem] tracking-[2px] uppercase text-[var(--muted)] mb-[6px]">Your Name</label>
+      <input type="text" id="input-name" placeholder="e.g. QuizMaster99" maxlength="20" class="w-full p-[12px_16px] text-base font-medium"/>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button class="btn btn-primary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-confirm-name">Let's Go ⚡</button>
+      <button class="btn btn-secondary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-cancel-name">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay fixed inset-0 z-[100] hidden items-center justify-center backdrop-blur-sm" id="modal-save">
+  <div class="modal max-w-[460px] w-[90%] p-10">
+    <h2 class="text-[2rem] tracking-[2px] mb-5">Save Your Score</h2>
+    <p class="text-[var(--muted)] leading-[1.6] mb-5">Enter your name to immortalise your score on the leaderboard.</p>
+    <div class="form-group mb-[18px]">
+      <label class="block text-[0.8rem] tracking-[2px] uppercase text-[var(--muted)] mb-[6px]">Fighter Name</label>
+      <input type="text" id="save-name" placeholder="Your name" maxlength="20" class="w-full p-[12px_16px] text-base font-medium"/>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button class="btn btn-gold font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-confirm-save">Save 🏆</button>
+      <button class="btn btn-secondary font-bold text-[1.05rem] tracking-[2px] uppercase py-[14px] px-[36px]" id="btn-cancel-save">Skip</button>
+    </div>
+  </div>
+</div>
+
+<div class="combo-flash fixed top-1/2 left-1/2 z-[200] -translate-x-1/2 -translate-y-1/2 scale-0 text-[4rem]" id="combo-flash"></div>
+
+<div id="toast" class="fixed bottom-[30px] right-[30px] z-[9999] text-[0.85rem] p-[14px_22px] translate-y-20 opacity-0 pointer-events-none backdrop-blur-md"></div>
+
+<script>
+// (All your exact JavaScript/jQuery core game states logic is safely kept intact here)
+const CATEGORIES = [
+  { id:'science',  name:'Science',   icon:'🔬', color:'#00e5ff', diff:'Hard',   diffClass:'diff-hard'  },
+  { id:'history',  name:'History',   icon:'🏛️', color:'#ffd23f', diff:'Medium', diffClass:'diff-med'   },
+  { id:'sports',   name:'Sports',    icon:'⚽', color:'#39ff14', diff:'Easy',   diffClass:'diff-easy'  },
+  { id:'tech',     name:'Tech',      icon:'💻', color:'#9d4edd', diff:'Hard',   diffClass:'diff-hard'  },
+  { id:'geo',      name:'Geography', icon:'🌍', color:'#ff8c42', diff:'Medium', diffClass:'diff-med'   },
+  { id:'movies',   name:'Movies',    icon:'🎬', color:'#ff3c3c', diff:'Easy',   diffClass:'diff-easy'  },
+  { id:'music',    name:'Music',     icon:'🎵', color:'#f72585', diff:'Medium', diffClass:'diff-med'   },
+  { id:'math',     name:'Math',      icon:'🧮', color:'#4cc9f0', diff:'Hard',   diffClass:'diff-hard'  },
+];
+
+const QUESTIONS = {
+  science:[
+    {q:'What is the chemical symbol for Gold?',        a:['Au','Ag','Gd','Go'],         correct:0},
+    {q:'How many bones are in the adult human body?',  a:['196','206','216','226'],      correct:1},
+    {q:'What planet is known as the Red Planet?',      a:['Venus','Jupiter','Mars','Saturn'], correct:2},
+    {q:'What is the speed of light (approx)?',         a:['200,000 km/s','299,792 km/s','350,000 km/s','150,000 km/s'], correct:1},
+    {q:'DNA stands for?',                              a:['Deoxyribonucleic Acid','Diribonucleic Acid','Dioxynucleic Acid','Deoxyribose Acid'], correct:0},
+    {q:'What is the powerhouse of the cell?',          a:['Nucleus','Ribosome','Mitochondria','Golgi Body'], correct:2},
+    {q:'What gas do plants absorb from the atmosphere?',a:['Oxygen','Nitrogen','Carbon Dioxide','Hydrogen'], correct:2},
+    {q:'What is the atomic number of Carbon?',         a:['4','6','8','12'],             correct:1},
+    {q:'What force keeps planets in orbit around the sun?', a:['Magnetism','Gravity','Friction','Tension'], correct:1},
+    {q:'What is the most abundant gas in Earth\'s atmosphere?', a:['Oxygen','Carbon Dioxide','Argon','Nitrogen'], correct:3},
+  ],
+  history:[
+    {q:'In which year did World War II end?',           a:['1943','1944','1945','1946'], correct:2},
+    {q:'Who was the first President of the United States?', a:['John Adams','Thomas Jefferson','George Washington','Benjamin Franklin'], correct:2},
+    {q:'The Great Wall of China was primarily built during which dynasty?', a:['Han','Tang','Ming','Qing'], correct:2},
+    {q:'Which ancient wonder was located in Alexandria?', a:['Colossus','Hanging Gardens','Great Pyramid','Lighthouse'], correct:3},
+    {q:'Napoleon Bonaparte was exiled to which island?', a:['Corsica','Elba','Saint Helena','Madagascar'], correct:2},
+    {q:'The Renaissance began in which country?',       a:['France','Spain','England','Italy'], correct:3},
+    {q:'Who discovered America in 1492?',               a:['Vasco da Gama','Christopher Columbus','Amerigo Vespucci','Ferdinand Magellan'], correct:1},
+    {q:'The Berlin Wall fell in what year?',            a:['1987','1988','1989','1990'], correct:2},
+    {q:'Cleopatra was the ruler of which ancient civilization?', a:['Roman','Greek','Egyptian','Babylonian'], correct:2},
+    {q:'The French Revolution began in which year?',    a:['1776','1789','1799','1804'], correct:1},
+  ],
+  sports:[
+    {q:'How many players are on a standard soccer team?', a:['9','10','11','12'],         correct:2},
+    {q:'In which sport is the term "grand slam" used?',   a:['Cricket','Tennis','Baseball','All of these'], correct:3},
+    {q:'How many rings are on the Olympic flag?',         a:['4','5','6','7'],             correct:1},
+    {q:'Which country invented basketball?',              a:['USA','Canada','UK','Australia'], correct:0},
+    {q:'A cricket pitch is how many yards long?',         a:['18','20','22','24'],         correct:2},
+    {q:'The FIFA World Cup is held every how many years?',a:['2','3','4','5'],             correct:2},
+    {q:'What sport is played at Wimbledon?',              a:['Badminton','Squash','Table Tennis','Tennis'], correct:3},
+    {q:'How long is a standard marathon?',                a:['26.2 miles','24.2 miles','28 miles','30 miles'], correct:0},
+    {q:'What is the highest score possible in 10-pin bowling?',a:['200','250','300','350'], correct:2},
+    {q:'How many holes are in a standard round of golf?', a:['16','18','20','22'],         correct:1},
+  ],
+  tech:[
+    {q:'What does CPU stand for?',                      a:['Core Processing Unit','Central Processing Unit','Computer Processing Unit','Central Program Unit'], correct:1},
+    {q:'Who co-founded Apple Inc.?',                    a:['Bill Gates','Steve Jobs','Elon Musk','Jeff Bezos'], correct:1},
+    {q:'What does HTTP stand for?',                     a:['HyperText Transfer Protocol','High Tech Transfer Protocol','HyperText Transport Process','Hyper Transfer Text Protocol'], correct:0},
+    {q:'What programming language runs in a web browser?', a:['Python','Java','JavaScript','C++'], correct:2},
+    {q:'What does RAM stand for?',                      a:['Read Access Memory','Random Access Memory','Rapid Access Memory','Read Active Memory'], correct:1},
+    {q:'Which company developed the Android OS?',       a:['Apple','Microsoft','Google','Samsung'], correct:2},
+    {q:'What does "AI" stand for in technology?',       a:['Automated Interface','Artificial Intelligence','Advanced Integration','Automated Intelligence'], correct:1},
+    {q:'What is the binary representation of 10?',      a:['0101','1000','1010','1100'], correct:2},
+    {q:'Who invented the World Wide Web?',              a:['Bill Gates','Steve Jobs','Tim Berners-Lee','Linus Torvalds'], correct:2},
+    {q:'What does "CSS" stand for?',                    a:['Computer Style Sheets','Cascading Style Sheets','Creative Style Sheets','Colorful Style Sheets'], correct:1},
+  ],
+  geo:[
+    {q:'What is the capital of Australia?',             a:['Sydney','Melbourne','Canberra','Brisbane'], correct:2},
+    {q:'Which is the largest continent by area?',       a:['Africa','North America','Asia','Europe'],   correct:2},
+    {q:'The Amazon River flows primarily through which country?', a:['Colombia','Venezuela','Peru','Brazil'], correct:3},
+    {q:'What is the smallest country in the world?',    a:['Monaco','San Marino','Vatican City','Liechtenstein'], correct:2},
+    {q:'Mount Everest is in which mountain range?',     a:['Andes','Alps','Himalayas','Rockies'],        correct:2},
+    {q:'What is the longest river in the world?',       a:['Amazon','Congo','Nile','Yangtze'],            correct:2},
+    {q:'Which country has the most natural lakes?',     a:['Russia','USA','Finland','Canada'],            correct:3},
+    {q:'The Sahara Desert is located on which continent?', a:['Asia','Australia','Africa','South America'], correct:2},
+    {q:'What is the currency of Japan?',                a:['Won','Yuan','Yen','Baht'],                    correct:2},
+    {q:'Which ocean is the largest?',                   a:['Atlantic','Indian','Arctic','Pacific'],       correct:3},
+  ],
+  movies:[
+    {q:'Who directed "The Godfather" (1972)?',          a:['Martin Scorsese','Francis Ford Coppola','Steven Spielberg','Stanley Kubrick'], correct:1},
+    {q:'"To infinity and beyond!" is a quote from?',    a:['Toy Story','The Lion King','Finding Nemo','Shrek'], correct:0},
+    {q:'Which film features the quote "I\'ll be back"?',a:['RoboCop','Total Recall','The Terminator','Predator'], correct:2},
+    {q:'What is the highest-grossing film of all time?',a:['Titanic','Avengers: Endgame','Avatar (2009)','Avatar: The Way of Water'], correct:2},
+    {q:'"Here\'s looking at you, kid" is from?',        a:['Citizen Kane','Casablanca','Gone with the Wind','Sunset Boulevard'], correct:1},
+    {q:'Which studio produced "Shrek"?',                a:['Disney','Pixar','DreamWorks','Universal'],    correct:2},
+    {q:'In "The Matrix", which pill does Neo take?',    a:['Blue','Green','Red','Yellow'],                 correct:2},
+    {q:'The villain Hannibal Lecter first appeared in which film?', a:['Manhunter','Silence of the Lambs','Red Dragon','Hannibal'], correct:0},
+    {q:'Who played Iron Man in the MCU?',               a:['Chris Evans','Mark Ruffalo','Robert Downey Jr.','Chris Hemsworth'], correct:2},
+    {q:'"You\'re gonna need a bigger boat" is from?',   a:['Jaws','The Abyss','Deep Blue Sea','Orca'],     correct:0},
+  ],
+  music:[
+    {q:'How many strings does a standard guitar have?', a:['4','5','6','7'],              correct:2},
+    {q:'What band was Freddie Mercury the lead singer of?', a:['Led Zeppelin','Queen','Aerosmith','The Rolling Stones'], correct:1},
+    {q:'What musical term means to gradually get louder?', a:['Decrescendo','Pianissimo','Crescendo','Fortissimo'], correct:2},
+    {q:'Which singer is known as the "Queen of Pop"?',  a:['Beyoncé','Rihanna','Madonna','Lady Gaga'],    correct:2},
+    {q:'How many keys does a standard piano have?',     a:['72','76','88','96'],          correct:2},
+    {q:'The Beatles are from which city?',              a:['London','Manchester','Birmingham','Liverpool'], correct:3},
+    {q:'What instrument does a luthier make?',          a:['Drums','Flutes','Stringed instruments','Brass instruments'], correct:2},
+    {q:'What is the fastest tempo marking?',            a:['Allegro','Presto','Vivace','Prestissimo'],     correct:3},
+    {q:'Which genre originated in African-American communities in the Deep South?', a:['Jazz','Blues','Rock','Country'], correct:1},
+    {q:'How many movements does a typical symphony have?', a:['2','3','4','5'],          correct:2},
+  ],
+  math:[
+    {q:'What is the value of π (pi) to 2 decimal places?', a:['3.12','3.14','3.16','3.18'], correct:1},
+    {q:'What is 12 × 12?',                              a:['124','132','144','148'],      correct:2},
+    {q:'What is the square root of 144?',               a:['10','11','12','13'],          correct:2},
+    {q:'What is 15% of 200?',                           a:['20','25','30','35'],          correct:2},
+    {q:'What is the next prime number after 11?',       a:['12','13','14','15'],          correct:1},
+    {q:'What is 2 to the power of 10?',                 a:['512','1024','2048','256'],    correct:1},
+    {q:'What is the sum of angles in a triangle?',      a:['90°','120°','180°','360°'],   correct:2},
+    {q:'What is 50% of 50% of 100?',                    a:['10','20','25','50'],          correct:2},
+    {q:'If x² = 81, what is x?',                        a:['7','8','9','10'],             correct:2},
+    {q:'What is the perimeter of a rectangle 6×4?',     a:['20','22','24','26'],          correct:0},
+  ],
+};
+
+const state = {
+  currentCat: null,
+  questions: [],
+  qIndex: 0,
+  score: 0,
+  correct: 0,
+  wrong: 0,
+  streak: 0,
+  bestStreak: 0,
+  timeTaken: [],
+  timerVal: 15,
+  timerInterval: null,
+  timerStart: 0,
+  answered: false,
+  playerName: '',
+};
+
+let leaderboard = [
+  {name:'ShadowFox',    score:980, cat:'Science',  accuracy:92},
+  {name:'NeonBlade',    score:940, cat:'Tech',     accuracy:88},
+  {name:'ViperQueen',   score:890, cat:'History',  accuracy:85},
+  {name:'CryptoKing',   score:860, cat:'Math',     accuracy:90},
+  {name:'BlitzWolf',    score:820, cat:'Sports',   accuracy:80},
+  {name:'StarDrifter',  score:780, cat:'Movies',   accuracy:78},
+  {name:'EchoRider',    score:740, cat:'Geography',accuracy:74},
+  {name:'PulseMaster',  score:700, cat:'Music',    accuracy:70},
+];
+
+function showScreen(id) {
+  $('.screen').removeClass('active');
+  $('#screen-' + id).addClass('active fade-in');
+  $('.nav-link').removeClass('text-[var(--accent)]').addClass('text-[var(--muted)]');
+  $(`.nav-link[data-screen="${id === 'quiz' || id === 'results' ? 'categories' : id}"]`).addClass('text-[var(--accent)]').removeClass('text-[var(--muted)]');
+  $(window).scrollTop(0);
+}
+
+$(document).on('click', '.nav-link', function() {
+  showScreen($(this).data('screen'));
+});
+
+$('#btn-play-now').on('click', () => showScreen('categories'));
+$('#btn-leaderboard-hero').on('click', () => showScreen('leaderboard'));
+
+function renderCategories() {
+  const $grid = $('#categories-grid').empty();
+  CATEGORIES.forEach(cat => {
+    const count = QUESTIONS[cat.id]?.length || 0;
+    $grid.append(`
+      <div class="cat-card p-7 sm:p-[28px_24px]" data-id="${cat.id}" style="--cat-color:${cat.color}">
+        <span class="text-[2.4rem] mb-3 block cat-icon">${cat.icon}</span>
+        <div class="cat-name text-[1.6rem] tracking-[2px] text-[var(--text)] mb-1">${cat.name}</div>
+        <div class="text-[0.85rem] text-[var(--muted)] cat-count">${count} Questions</div>
+        <div class="cat-diff absolute top-3 right-3 text-[0.7rem] tracking-[1px] p-[3px_8px] border rounded-[2px] ${cat.diffClass}">${cat.diff}</div>
+      </div>
+    `);
+  });
+}
+
+$(document).on('click', '.cat-card', function() {
+  const catId = $(this).data('id');
+  openNameModal(catId);
+});
+
+function openNameModal(catId) {
+  state.currentCat = catId;
+  $('#input-name').val(state.playerName || '');
+  $('#modal-name').addClass('show');
+  setTimeout(() => $('#input-name').focus(), 50);
+}
+
+$('#btn-confirm-name').on('click', confirmName);
+$('#input-name').on('keydown', e => { if (e.key === 'Enter') confirmName(); });
+
+function confirmName() {
+  const name = $('#input-name').val().trim();
+  if (!name) { showToast('⚠ Enter your name first!'); return; }
+  state.playerName = name;
+  $('#modal-name').removeClass('show');
+  startQuiz(state.currentCat);
+}
+
+$('#btn-cancel-name').on('click', () => $('#modal-name').removeClass('show'));
+
+function startQuiz(catId) {
+  const qs = [...QUESTIONS[catId]].sort(() => Math.random() - 0.5).slice(0, 10);
+  Object.assign(state, {
+    questions: qs, qIndex: 0, score: 0, correct: 0,
+    wrong: 0, streak: 0, bestStreak: 0, timeTaken: [],
+    answered: false,
+  });
+
+  const catData = CATEGORIES.find(c => c.id === catId);
+  $('#quiz-cat-label').text(catData.name);
+
+  renderProgressDots();
+  showScreen('quiz');
+  loadQuestion();
+}
+
+function renderProgressDots() {
+  const $dots = $('#progress-dots').empty();
+  state.questions.forEach((_, i) => {
+    $dots.append(`<div class="w-7 h-[6px] rounded-[3px] p-dot" id="dot-${i}"></div>`);
+  });
+}
+
+function loadQuestion() {
+  const q = state.questions[state.qIndex];
+  state.answered = false;
+  state.timerStart = Date.now();
+
+  $('#quiz-qnum').text(`Q ${state.qIndex + 1} / ${state.questions.length}`);
+  $('#question-text').text(q.q);
+  $('#live-score').text(state.score);
+  $('#feedback-bar').removeClass('flex').addClass('hidden').removeClass('correct-fb wrong-fb');
+  $('#btn-next').hide();
+
+  state.questions.forEach((_, i) => {
+    const $d = $(`#dot-${i}`);
+    $d.removeClass('current done-correct done-wrong');
+    if (i === state.qIndex) $d.addClass('current');
+  });
+
+  const letters = ['A','B','C','D'];
+  const $grid = $('#answers-grid').empty();
+  q.a.forEach((ans, idx) => {
+    $grid.append(`
+      <button class="answer-btn font-semibold text-[1.05rem] tracking-[0.5px] p-[18px_20px] text-left" data-idx="${idx}">
+        <span class="ans-letter text-[1.1rem] mr-[10px]">${letters[idx]}.</span>${ans}
+      </button>
+    `);
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerVal = 15;
+  updateTimerUI(15);
+
+  state.timerInterval = setInterval(() => {
+    state.timerVal--;
+    updateTimerUI(state.timerVal);
+    if (state.timerVal <= 0) {
+      clearInterval(state.timerInterval);
+      if (!state.answered) timeOut();
+    }
+  }, 1000);
+}
+
+function updateTimerUI(val) {
+  const pct = (val / 15) * 100;
+  $('#timer-bar').css('width', pct + '%');
+  $('#timer-num').text(val);
+  const urgent = val <= 5;
+  $('#timer-num').toggleClass('urgent', urgent);
+  $('#timer-bar').toggleClass('urgent', urgent);
+}
+
+function timeOut() {
+  state.answered = true;
+  state.streak = 0;
+  state.wrong++;
+  state.timeTaken.push(15000);
+  const correct = state.questions[state.qIndex].correct;
+  $(`.answer-btn[data-idx="${correct}"]`).addClass('correct');
+  $('.answer-btn').prop('disabled', true);
+
+  showFeedback(false, 'Time\'s up! The correct answer was highlighted.');
+  $(`#dot-${state.qIndex}`).removeClass('current').addClass('done-wrong');
+  $('#btn-next').fadeIn(200);
+}
+
+$(document).on('click', '.answer-btn', function() {
+  if (state.answered) return;
+  clearInterval(state.timerInterval);
+  state.answered = true;
+
+  const chosen = parseInt($(this).data('idx'));
+  const correct = state.questions[state.qIndex].correct;
+  const elapsed = Date.now() - state.timerStart;
+  state.timeTaken.push(elapsed);
+
+  $('.answer-btn').prop('disabled', true);
+
+  if (chosen === correct) {
+    const timeBonus = Math.max(0, Math.round((state.timerVal / 15) * 50));
+    const pts = 100 + timeBonus;
+    state.score += pts;
+    state.correct++;
+    state.streak++;
+    if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+
+    $(this).addClass('correct');
+    $(`#dot-${state.qIndex}`).removeClass('current').addClass('done-correct');
+    showFeedback(true, `+${pts} pts  ${state.streak >= 3 ? `🔥 ${state.streak}x Combo!` : ''}`);
+    if (state.streak >= 3) showComboFlash(`${state.streak}× COMBO!`);
+    $('#live-score').text(state.score);
+  } else {
+    state.wrong++;
+    state.streak = 0;
+    $(this).addClass('wrong');
+    $(`.answer-btn[data-idx="${correct}"]`).addClass('correct');
+    $(`#dot-${state.qIndex}`).removeClass('current').addClass('done-wrong');
+    showFeedback(false, `Wrong! Correct: ${state.questions[state.qIndex].a[correct]}`);
+  }
+
+  $('#btn-next').fadeIn(200);
+});
+
+$('#btn-next').on('click', () => {
+  state.qIndex++;
+  if (state.qIndex >= state.questions.length) {
+    endQuiz();
+  } else {
+    loadQuestion();
+  }
+});
+
+function showFeedback(correct, text) {
+  $('#feedback-bar')
+    .removeClass('correct-fb wrong-fb hidden')
+    .addClass(correct ? 'correct-fb' : 'wrong-fb')
+    .addClass('flex');
+  $('.feedback-icon').text(correct ? '✅' : '❌');
+  $('#feedback-text').text(text);
+}
+
+function showComboFlash(text) {
+  const $el = $('#combo-flash').text(text).removeClass('pop');
+  setTimeout(() => $el.addClass('pop'), 10);
+}
+
+function endQuiz() {
+  clearInterval(state.timerInterval);
+  const total = state.questions.length;
+  const pct = Math.round((state.correct / total) * 100);
+  const avgTime = state.timeTaken.length
+    ? (state.timeTaken.reduce((a,b) => a+b, 0) / state.timeTaken.length / 1000).toFixed(1)
+    : '—';
+
+  let grade, label;
+  if (pct >= 90)      { grade = 'S'; label = 'LEGENDARY FIGHTER'; }
+  else if (pct >= 70) { grade = 'A'; label = 'ELITE COMBATANT'; }
+  else if (pct >= 50) { grade = 'B'; label = 'SKILLED WARRIOR'; }
+  else if (pct >= 30) { grade = 'C'; label = 'APPRENTICE'; }
+  else                { grade = 'F'; label = 'NEEDS TRAINING'; }
+
+  const gradeColors = {S:'var(--gold)',A:'var(--green)',B:'var(--cyan)',C:'var(--purple)',F:'var(--accent)'};
+  $('#result-grade').text(grade).css('color', gradeColors[grade]).css('text-shadow',`0 0 40px ${gradeColors[grade]}`);
+  $('#result-label').text(label);
+  $('#result-score-big').text(state.score);
+  $('#result-score-sub').text(`Points Earned · ${pct}% Accuracy`);
+  $('#rs-correct').text(state.correct);
+  $('#rs-wrong').text(state.wrong);
+  $('#rs-streak').text(state.bestStreak);
+  $('#rs-time').text(avgTime + 's');
+
+  $('#save-name').val(state.playerName || '');
+  showScreen('results');
+}
+
+$('#btn-retry').on('click', () => startQuiz(state.currentCat));
+$('#btn-home-result').on('click', () => showScreen('home'));
+
+$('#btn-save-score').on('click', () => {
+  $('#modal-save').addClass('show');
+  setTimeout(() => $('#save-name').focus(), 50);
+});
+
+$('#btn-confirm-save').on('click', saveScore);
+$('#save-name').on('keydown', e => { if (e.key === 'Enter') saveScore(); });
+$('#btn-cancel-save').on('click', () => $('#modal-save').removeClass('show'));
+
+function saveScore() {
+  const name = $('#save-name').val().trim() || state.playerName || 'Anonymous';
+  const catName = CATEGORIES.find(c => c.id === state.currentCat)?.name || '—';
+  const total = state.questions.length;
+  const acc = Math.round((state.correct / total) * 100);
+
+  leaderboard.push({ name, score: state.score, cat: catName, accuracy: acc });
+  leaderboard.sort((a, b) => b.score - a.score);
+  leaderboard = leaderboard.slice(0, 15);
+
+  $('#modal-save').removeClass('show');
+  showToast('🏆 Score saved to leaderboard!');
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const $body = $('#lb-body').empty();
+  leaderboard.forEach((entry, i) => {
+    const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const rankSymbol = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1;
+    const initial = (entry.name || '?')[0].toUpperCase();
+    $body.append(`
+      <tr>
+        <td class="p-4 lb-rank ${rankClass}">${rankSymbol}</td>
+        <td class="p-4">
+          <div class="flex items-center gap-3 lb-player">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[1.1rem] text-white lb-avatar">${initial}</div>
+            <span>${entry.name}</span>
+          </div>
+        </td>
+        <td class="p-4 lb-score">${entry.score}</td>
+        <td class="p-4">
+          <span class="text-[0.7rem] p-[3px_8px] rounded-[2px] lb-cat-badge">${entry.cat}</span>
+        </td>
+        <td class="p-4 text-[var(--green)]">${entry.accuracy}%</td>
+      </tr>
+    `);
+  });
+}
+
+let toastTimer;
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  $('#toast').text(msg).removeClass('opacity-0 translate-y-20').addClass('opacity-100 translate-y-0');
+  toastTimer = setTimeout(() => $('#toast').removeClass('opacity-100 translate-y-0').addClass('opacity-0 translate-y-20'), 3000);
+}
+
+$(document).ready(() => {
+  renderCategories();
+  renderLeaderboard();
+
+  function animateCount($el, end, suffix='') {
+    let val = 0;
+    const step = Math.ceil(end / 40);
+    const iv = setInterval(() => {
+      val = Math.min(val + step, end);
+      $el.text(val.toLocaleString() + suffix);
+      if (val >= end) clearInterval(iv);
+    }, 30);
+  }
+  animateCount($('#s-players'), 1247);
+  animateCount($('#s-questions'), 500, '+');
+  animateCount($('#s-categories'), 8);
+  animateCount($('#s-battles'), 9834);
+
+  $('.modal-overlay').on('click', function(e) {
+    if ($(e.target).hasClass('modal-overlay')) $(this).removeClass('show');
+  });
+});
+</script>
+</body>
+</html>
