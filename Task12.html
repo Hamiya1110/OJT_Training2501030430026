@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Move Div Using jQuery</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+  <div class="flex gap-10">
+
+    <!-- Container 1 -->
+    <div
+      id="box1"
+      class="w-72 h-72 bg-blue-100 border-2 border-blue-500 rounded-xl p-4"
+    >
+      <h2 class="text-xl font-bold mb-4 text-blue-700">
+        Box 1
+      </h2>
+
+      <!-- Movable Div -->
+      <div
+        id="moveDiv"
+        class="bg-blue-600 text-white p-4 rounded-lg text-center"
+      >
+        Move Me
+      </div>
+    </div>
+
+    <!-- Container 2 -->
+    <div
+      id="box2"
+      class="w-72 h-72 bg-green-100 border-2 border-green-500 rounded-xl p-4"
+    >
+      <h2 class="text-xl font-bold mb-4 text-green-700">
+        Box 2
+      </h2>
+    </div>
+
+  </div>
+
+  <!-- Button -->
+  <div class="absolute bottom-10">
+    <button
+      id="moveBtn"
+      class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
+    >
+      Move Div
+    </button>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+
+      $("#moveBtn").click(function () {
+
+        // Move div from Box 1 to Box 2
+        $("#moveDiv").appendTo("#box2");
+
+      });
+
+    });
+  </script>
+
+</body>
+</html>
