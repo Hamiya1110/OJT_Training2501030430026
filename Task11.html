@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zebra Stripe Table with jQuery</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-gray-100 p-10">
+
+  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6">
+
+    <h1 class="text-3xl font-bold mb-6 text-center">
+      Zebra Stripe Table
+    </h1>
+
+    <table class="w-full border-collapse text-left" id="studentTable">
+      <thead>
+        <tr class="bg-blue-600 text-white">
+          <th class="p-3">ID</th>
+          <th class="p-3">Name</th>
+          <th class="p-3">Course</th>
+          <th class="p-3">City</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td class="p-3">1</td>
+          <td class="p-3">Amit</td>
+          <td class="p-3">Web Development</td>
+          <td class="p-3">Ahmedabad</td>
+        </tr>
+
+        <tr>
+          <td class="p-3">2</td>
+          <td class="p-3">Priya</td>
+          <td class="p-3">UI/UX Design</td>
+          <td class="p-3">Mumbai</td>
+        </tr>
+
+        <tr>
+          <td class="p-3">3</td>
+          <td class="p-3">Rahul</td>
+          <td class="p-3">Data Science</td>
+          <td class="p-3">Delhi</td>
+        </tr>
+
+        <tr>
+          <td class="p-3">4</td>
+          <td class="p-3">Sneha</td>
+          <td class="p-3">Cyber Security</td>
+          <td class="p-3">Pune</td>
+        </tr>
+
+        <tr>
+          <td class="p-3">5</td>
+          <td class="p-3">Karan</td>
+          <td class="p-3">AI & ML</td>
+          <td class="p-3">Bangalore</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <script>
+    $(document).ready(function () {
+
+      // Apply zebra striping
+      $("#studentTable tbody tr:odd").css("background-color", "#f3f4f6");
+
+      // Hover effect
+      $("#studentTable tbody tr").hover(
+        function () {
+          $(this).css({
+            "background-color": "#dbeafe",
+            "transition": "0.3s"
+          });
+        },
+        function () {
+
+          // Restore zebra color
+          const index = $(this).index();
+
+          if (index % 2 === 1) {
+            $(this).css("background-color", "#f3f4f6");
+          } else {
+            $(this).css("background-color", "#ffffff");
+          }
+        }
+      );
+
+    });
+  </script>
+
+</body>
+</html>
