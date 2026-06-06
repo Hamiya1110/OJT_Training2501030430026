@@ -154,7 +154,6 @@
       .login-box h1, .signup-box h1 { margin-bottom: 25px; font-weight: bold; }
       .login-box h1 i, .signup-box h1 i { color: #ff4d4d; margin-right: 10px; }
 
-      /* Input wrapper layout with icons */
       .input-group-custom {
         position: relative;
         margin-top: 15px;
@@ -180,12 +179,10 @@
         font-size: 15px;
       }
 
-      /* Red border on error */
       .login-box input.error, .signup-box input.error, .checkout-step input.error {
         border: 2px solid #ff6b6b;
       }
 
-      /* Error message text */
       .err-msg {
         color: #ff9999;
         font-size: 12px;
@@ -273,6 +270,7 @@
         padding: 18px;
         border-bottom: 1px solid #ddd;
         text-align: center;
+        vertical-align: middle;
       }
 
       .menu-table tr:hover { background: #f5f5f5; }
@@ -355,59 +353,59 @@
         color: #333;
         text-align: left;
       }
-      /* ABOUT & CONTACT SECTION */
 
-.info-section{
-  display: none;
-  padding: 40px;
-}
+      .info-section{
+        display: none;
+        padding: 40px;
+      }
 
-.info-section h1{
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 40px;
-  color: #222;
-  font-weight: bold;
-}
+      .info-section h1{
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 40px;
+        color: #222;
+        font-weight: bold;
+      }
 
-.info-box{
-  max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  text-align: center;
-}
+      .info-box{
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        text-align: center;
+      }
 
-.info-box p{
-  font-size: 20px;
-  color: #555;
-  line-height: 1.9;
-}
-/* FIX FOOTER POSITION */
+      .info-box p{
+        font-size: 20px;
+        color: #555;
+        line-height: 1.9;
+      }
 
-body{
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+      body{
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-.main-website{
-  display: none;
-  flex: 1;
-  flex-direction: column;
-}
+      .main-website{
+        display: none;
+        flex: 1;
+        flex-direction: column;
+      }
 
-footer{
-  margin-top: auto;
-}
+      footer{
+        margin-top: auto;
+      }
     </style>
   </head>
   <body>
 
+    <!-- AUTH OVERLAY -->
     <div class="form-container" id="auth-overlay">
 
+      <!-- LOGIN BOX -->
       <div class="login-box" id="login-box" style="display:block;">
         <h1><i class="bi bi-box-arrow-in-right"></i>Login</h1>
 
@@ -426,7 +424,8 @@ footer{
 
         <p>Don't have an account? <label onclick="switchForm('signup')">Register <i class="bi bi-arrow-right-short"></i></label></p>
       </div>
-      
+
+      <!-- SIGNUP BOX -->
       <div class="signup-box" id="signup-box">
         <h1><i class="bi bi-person-plus"></i>Register</h1>
 
@@ -435,12 +434,6 @@ footer{
           <input type="text" id="signup-name" placeholder="Enter Full Name">
         </div>
         <div class="err-msg" id="err-sname">Please enter your name.</div>
-
-        <div class="input-group-custom">
-          <i class="bi bi-envelope"></i>
-          <input type="email" id="signup-email" placeholder="Enter Email Address">
-        </div>
-        <div class="err-msg" id="err-semail">Please enter a valid email address.</div>
 
         <div class="input-group-custom">
           <i class="bi bi-telephone"></i>
@@ -467,6 +460,7 @@ footer{
 
     </div>
 
+    <!-- MAIN WEBSITE -->
     <div class="main-website" id="main-website" style="display:none;">
 
       <header>
@@ -483,11 +477,13 @@ footer{
         <a href="#" id="nav-cart" onclick="showSection('cart', this)">Cart 🛒</a>
       </nav>
 
+      <!-- WISHLIST SECTION -->
       <div id="section-wishlist" style="display:none; padding:40px;">
         <h1 style="text-align:center; margin-bottom:30px;">My Wishlist ❤️</h1>
         <div id="wishlist-container" class="container"></div>
       </div>
 
+      <!-- CART SECTION -->
       <div id="section-cart" style="display:none; padding:40px;">
         <h1 style="text-align:center; margin-bottom:30px;">Shopping Cart 🛒</h1>
         <div id="cart-container" class="container"></div>
@@ -497,11 +493,13 @@ footer{
         </div>
       </div>
 
+      <!-- HOME SECTION -->
       <div id="section-home">
         <div class="hero">Delicious Food Delivered Fast</div>
 
         <div class="container">
           
+          <!-- Burger Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq2vVVGWx1u0-2Q7QB7FR1t3cdS28oX5FN3w&s" alt="Burger">
             <h2>Burger</h2>
@@ -512,6 +510,7 @@ footer{
             </div>
           </div>
 
+          <!-- Pizza Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt6zKlWn0zYSDXv2XwOIDGWfsfi1OVDWmAcw&s" alt="Pizza">
             <h2>Pizza</h2>
@@ -522,6 +521,7 @@ footer{
             </div>
           </div>
 
+          <!-- Pasta Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtGxJQNLQ_tpfDqgGfFpEARarc7qNGTDVEYg&s" alt="Pasta">
             <h2>Pasta</h2>
@@ -532,6 +532,7 @@ footer{
             </div>
           </div>
 
+          <!-- PaniPuri Card -->
           <div class="card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBIEkjFHJFxe3pjU9IooFnr9gI3SUZHsn1jA&s" alt="PaniPuri">
             <h2>PaniPuri</h2>
@@ -542,6 +543,18 @@ footer{
             </div>
           </div>
 
+          <!-- Tacos Card -->
+          <div class="card">
+            <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80" alt="Tacos">
+            <h2>Tacos</h2>
+            <p class="price">₹220</p>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Tacos', 220, 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Tacos','₹220','https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80')">❤</button>
+            </div>
+          </div>
+
+          <!-- French Fries Card -->
           <div class="card">
             <img src="https://tse4.mm.bing.net/th/id/OIP.YXVbSMVELSgQ62ezc2F6_AHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="French Fries">
             <h2>French Fries</h2>
@@ -552,16 +565,40 @@ footer{
             </div>
           </div>
 
+          <!-- Sandwich Card -->
           <div class="card">
             <img src="https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg" alt="Sandwich">
             <h2>Sandwich</h2>
-            <p class="price">₹120</p>
+            <p class="price">₹140</p>
             <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
-              <button class="btn" onclick="addToCart('Sandwich', 120, 'https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg')">Add To Cart</button>
-              <button class="wishlist-btn" onclick="addToWishlist('Sandwich','₹120','https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg')">❤</button>
+              <button class="btn" onclick="addToCart('Sandwich', 140, 'https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Sandwich','₹140','https://www.southernliving.com/thmb/UW4kKKL-_M3WgP7pkL6Pb6lwcgM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Ham_Sandwich_011-1-49227336bc074513aaf8fdbde440eafe.jpg')">❤</button>
             </div>
           </div>
 
+          <!-- Cold Drink Card -->
+          <div class="card">
+            <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80" alt="Cold Drink">
+            <h2>Cold Drink</h2>
+            <p class="price">₹60</p>
+            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+              <button class="btn" onclick="addToCart('Cold Drink', 60, 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80')">Add To Cart</button>
+              <button class="wishlist-btn" onclick="addToWishlist('Cold Drink','₹60','https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80')">❤</button>
+            </div>
+          </div>
+
+          <!-- Ice Cream Card -->
+           <div class="card">
+             <img src="https://tse3.mm.bing.net/th/id/OIP.rbKvKj9y8DJOUkhXl0wLAgHaHa?cb=thfvnextfalcon2&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Ice Cream">
+             <h2>Ice Cream</h2>
+             <p class="price">₹120</p>
+             <div style="display:flex; justify-content:center; gap:10px; margin-bottom:20px;">
+               <button class="btn" onclick="addToCart('Ice Cream', 120, 'https://tse3.mm.bing.net/th/id/OIP.rbKvKj9y8DJOUkhXl0wLAgHaHa?cb=thfvnextfalcon2&rs=1&pid=ImgDetMain&o=7&rm=3')">Add To Cart</button>
+               <button class="wishlist-btn" onclick="addToWishlist('Ice Cream','₹120','https://tse3.mm.bing.net/th/id/OIP.rbKvKj9y8DJOUkhXl0wLAgHaHa?cb=thfvnextfalcon2&rs=1&pid=ImgDetMain&o=7&rm=3L')">❤</button>
+             </div>
+          </div>
+
+          <!-- Coffee Card -->
           <div class="card">
             <img src="https://neurosciencenews.com/files/2023/06/coffee-brain-caffeine-neuroscincces-1155x770.jpg" alt="Coffee">
             <h2>Coffee</h2>
@@ -575,6 +612,7 @@ footer{
         </div>
       </div>
 
+      <!-- MENU SECTION -->
       <div class="product-details" id="section-menu">
         <h1>Our Full Menu</h1>
         <table class="menu-table">
@@ -641,43 +679,36 @@ footer{
           <tr>
             <td>☕ Coffee</td>
             <td>Hot creamy coffee with rich flavor</td>
-            <td>₹80</td>
+            <td>₹199</td>
             <td>Available</td>
           </tr>
         </table>
       </div>
 
-<div id="section-about" class="info-section">
-  
-  <h1>About Us</h1>
+      <!-- ABOUT SECTION -->
+      <div id="section-about" class="info-section">
+        <h1>About Us</h1>
+        <div class="info-box">
+          <p>
+            Foodie Hub is your go-to platform for ordering fresh,
+            delicious meals from the comfort of your home.
+            We partner with the best local chefs to bring you
+            quality food, fast delivery, and amazing taste every time.
+          </p>
+        </div>
+      </div>
 
-  <div class="info-box">
-    <p>
-      Foodie Hub is your go-to platform for ordering fresh,
-      delicious meals from the comfort of your home.
-      We partner with the best local chefs to bring you
-      quality food, fast delivery, and amazing taste every time.
-    </p>
-  </div>
-
-</div>
-
-
-<div id="section-contact" class="info-section">
-
-  <h1>Contact Us</h1>
-
-  <div class="info-box">
-    <p>
-      📧 Support Email: support@foodiehub.com <br><br>
-
-      📞 Phone Contact: +91 98765 43210 <br><br>
-
-      📍 Our Location: 123 Food Street, Ahmedabad, India
-    </p>
-  </div>
-
-</div>
+      <!-- CONTACT SECTION -->
+      <div id="section-contact" class="info-section">
+        <h1>Contact Us</h1>
+        <div class="info-box">
+          <p>
+            📧 Support Email: support@foodiehub.com <br><br>
+            📞 Phone Contact: +91 98765 43210 <br><br>
+            📍 Our Location: 123 Food Street, Ahmedabad, India
+          </p>
+        </div>
+      </div>
 
       <footer>
         <p>© 2026 Foodie Hub | All Rights Reserved</p>
@@ -685,6 +716,7 @@ footer{
 
     </div>
 
+    <!-- ── CHECKOUT MODAL WITH ADDRESS & PAYMENT ── -->
     <div class="payment-modal-overlay" id="payment-overlay">
       <div class="payment-card">
         <span class="close-payment" onclick="closeCheckoutModal()">&times;</span>
@@ -692,6 +724,7 @@ footer{
         <p id="payment-amount-text" style="text-align:center; color:#ff4d4d; font-size:18px; font-weight:bold;"></p>
         
         <div class="checkout-step">
+          <!-- ADDRESS SUB-FORM -->
           <div class="section-title"><i class="bi bi-geo-alt-fill"></i> Delivery Address</div>
           
           <div class="input-group-custom">
@@ -712,6 +745,7 @@ footer{
           </div>
           <div class="err-msg" id="err-addr-landmark">Please mention a nearby landmark.</div>
 
+          <!-- PAYMENT METHODS TAB -->
           <div class="section-title"><i class="bi bi-credit-card-fill"></i> Select Payment Method</div>
           <div class="pay-methods">
             <div class="method-tab active" id="tab-upi" onclick="switchPayMethod('upi')">
@@ -725,6 +759,7 @@ footer{
             </div>
           </div>
 
+          <!-- UPI FIELD -->
           <div class="method-content active" id="content-upi">
             <div class="input-group-custom">
               <i class="bi bi-at"></i>
@@ -733,6 +768,7 @@ footer{
             <div class="err-msg" id="err-upi">Please enter a valid UPI ID format.</div>
           </div>
 
+          <!-- CARD FIELDS -->
           <div class="method-content" id="content-card">
             <div class="input-group-custom">
               <i class="bi bi-credit-card-2-front"></i>
@@ -758,6 +794,7 @@ footer{
             </div>
           </div>
 
+          <!-- COD INFO -->
           <div class="method-content" id="content-cod">
             <p style="color:#555; text-align:center; padding:10px 0; font-size:14px; margin:0;">
               <i class="bi bi-truck" style="font-size: 22px; color: green; display:block; margin-bottom:5px;"></i>
@@ -769,19 +806,17 @@ footer{
         </div>
       </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <script>
-      // ── Saved users ──
       let users = JSON.parse(localStorage.getItem('fh_users') || '{}');
 
-      // ── Switch between Login / Signup boxes ──
       function switchForm(mode) {
         document.getElementById('login-box').style.display  = mode === 'login'  ? 'block' : 'none';
         document.getElementById('signup-box').style.display = mode === 'signup' ? 'block' : 'none';
       }
 
-      // ── Helper: show/hide error ──
       function setError(inputId, errId, show) {
         const inputEl = document.getElementById(inputId);
         const errEl = document.getElementById(errId);
@@ -789,7 +824,6 @@ footer{
         if(errEl) errEl.classList.toggle('show', show);
       }
 
-      // ── LOGIN ──
       function doLogin() {
         const phone = document.getElementById('login-phone').value.trim();
         const pass  = document.getElementById('login-pass').value;
@@ -820,10 +854,8 @@ footer{
         enterSite();
       }
 
-      // ── SIGNUP ──
       function doSignup() {
         const name    = document.getElementById('signup-name').value.trim();
-        const email   = document.getElementById('signup-email').value.trim();
         const phone   = document.getElementById('signup-phone').value.trim();
         const pass    = document.getElementById('signup-pass').value;
         const confirm = document.getElementById('signup-confirm').value;
@@ -831,12 +863,6 @@ footer{
 
         setError('signup-name', 'err-sname', name.length < 2);
         if (name.length < 2) ok = false;
-
-        // Validating Email using Standard Regex Layout
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const emailOk = emailPattern.test(email);
-        setError('signup-email', 'err-semail', !emailOk);
-        if (!emailOk) ok = false;
 
         const phoneOk = /^\d{10}$/.test(phone);
         setError('signup-phone', 'err-sphone', !phoneOk);
@@ -858,8 +884,7 @@ footer{
           return;
         }
 
-        // Saving account elements into localStorage
-        users[phone] = { name, email, pass };
+        users[phone] = { name, pass };
         localStorage.setItem('fh_users', JSON.stringify(users));
         enterSite();
       }
@@ -869,7 +894,6 @@ footer{
         document.getElementById('main-website').style.display = 'flex';
       }
 
-      // ── WISHLIST ──
       let wishlist = JSON.parse(localStorage.getItem('fh_wishlist') || '[]');
 
       function addToWishlist(name, price, image) {
@@ -912,7 +936,6 @@ footer{
         });
       }
 
-      // ── CART ──
       let cart = JSON.parse(localStorage.getItem('fh_cart') || '[]');
       let currentCartTotal = 0;
 
@@ -925,7 +948,9 @@ footer{
         }
         localStorage.setItem('fh_cart', JSON.stringify(cart));
         renderCart();
-        alert(name + ' added to cart 🛒');
+        
+        // Automatically open the cart section and activate navigation tab
+        showSection('cart', document.getElementById('nav-cart'));
       }
 
       function removeFromCart(name) {
@@ -983,11 +1008,9 @@ footer{
         if(checkoutBtn) checkoutBtn.style.display = 'inline-block';
       }
 
-      // Initial Renders
       renderCart();
       renderWishlist();
 
-      // ── Sections Switch Logic ──
       const sections = {
         home: document.getElementById('section-home'),
         menu: document.getElementById('section-menu'),
@@ -999,7 +1022,7 @@ footer{
 
       function showSection(name, clickedLink) {
         document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-        clickedLink.classList.add('active');
+        if (clickedLink) clickedLink.classList.add('active');
 
         Object.entries(sections).forEach(([key, el]) => {
           if (key === 'menu') {
@@ -1022,7 +1045,6 @@ footer{
         }
       }
 
-      // ── CHECKOUT & ADDRESS VERIFICATION LOGIC ──
       let activeMethod = 'upi';
 
       function openCheckoutModal() {
@@ -1046,7 +1068,6 @@ footer{
       function processPayment() {
         let isValid = true;
 
-        // 1. Validate Address Fields First
         const flat = document.getElementById('address-flat').value.trim();
         const street = document.getElementById('address-street').value.trim();
         const landmark = document.getElementById('address-landmark').value.trim();
@@ -1072,7 +1093,6 @@ footer{
           setError('address-landmark', 'err-addr-landmark', false);
         }
 
-        // 2. Validate Active Payment Method Form Fields
         if (activeMethod === 'upi') {
           const upiId = document.getElementById('pay-upi-id').value.trim();
           const upiPattern = /^[\w.-]+@[\w.-]+$/;
@@ -1112,13 +1132,11 @@ footer{
 
         if (!isValid) return;
 
-        // Process final response
         const fullDeliveryAddress = `${flat}, ${street} (Landmark: ${landmark})`;
         
         alert("Validating delivery route and running payment process securely...");
         alert(`🎉 Success! Order placed successfully via ${activeMethod.toUpperCase()}.\n\n📍 Delivering to: ${fullDeliveryAddress}\n\nOur delivery agent will arrive within 30 minutes!`);
         
-        // Reset inputs and clear operational data state
         document.getElementById('address-flat').value = '';
         document.getElementById('address-street').value = '';
         document.getElementById('address-landmark').value = '';
@@ -1134,7 +1152,6 @@ footer{
         showSection('home', document.getElementById('nav-home'));
       }
 
-      // Enforce expiry date typing formatting (adds '/')
       document.getElementById('pay-card-expiry').addEventListener('input', function (e) {
         let input = e.target.value.replace(/\D/g, '');
         if (input.length > 2) {
